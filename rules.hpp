@@ -67,6 +67,9 @@ namespace boidz
                 sum_y += a.getPosition().y - b.getPosition().y;
             }
         }
+
+        Object v_separation{-par.s * sum_x, -par.s * sum_y};
+        return v_separation;
     }
 
 }
