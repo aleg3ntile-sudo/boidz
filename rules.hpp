@@ -37,7 +37,7 @@ namespace boidz
         return false;
     }
 
-    std::vector<SingleBoid> get_neighbours(double distance, SingleBoid s, Flock f)
+    std::vector<SingleBoid> get_neighbours(double const &distance, SingleBoid &s, Flock const &f)
     {
         std::vector<SingleBoid> neighbours{};
         for (auto x : f.flock)
@@ -69,6 +69,23 @@ namespace boidz
 
         Object v_separation{-par.s * sum_x, -par.s * sum_y};
         return v_separation;
+    }
+
+    Object alignment_for_single_boid(Parameters const &par, Flock &stormo, SingleBoid &s)
+    {
+        Object v_alignment;
+        Object v_sum{0., 0.};
+        for (auto b : stormo.flock)
+        {
+            if (b.getCardinality() != s.getCardinality())
+            {
+                v_sum.x += b.getVelocity().x;
+                v_sum.y += b.getVelocity().y;
+            }
+        }
+        v_alignment = {par.a * ((v_sum.x / stormo.flock.size() - 1) - s.getVelocity().x),
+                       par.a * ((v_sum.y / stormo.flock.size() - 1) - s.getVelocity().y)};
+        return v_alignment;
     }
 
 }
