@@ -57,7 +57,6 @@ namespace boidz
     {
         double sum_x{0};
         double sum_y{0};
-        Object v_separation{0., 0.};
         auto neighbours = get_neighbours(par.d, a, stormo);
         for (auto b : neighbours)
         {
