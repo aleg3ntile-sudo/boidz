@@ -61,3 +61,17 @@ TEST_CASE("check get_neighbours function - some neighbours") {
   auto result = get_neighbours(2.0, b1, f);
   CHECK(result.size() == 1);
 }
+
+TEST_CASE("check separation-for_singleboid function") {
+  Parameters par{1.0, 5.0, 2.0, 0.0, 0.0}; // s=1, d=5, d_s=2
+  Flock f;
+  SingleBoid a{{0.0, 0.0}, {0.0, 0.0}, 1};
+  SingleBoid b{{1.0, 0.0}, {0.0, 0.0}, 2};
+  f.flock.push_back(a);
+  f.flock.push_back(b);
+
+  Coords result = separation_for_single_boid(par, f, a);
+
+  CHECK(result.x == doctest::Approx(-1.0));
+  CHECK(result.y == doctest::Approx(0.0));
+}

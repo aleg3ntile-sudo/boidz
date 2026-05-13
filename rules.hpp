@@ -52,8 +52,8 @@ Coords separation_for_single_boid(Parameters const &par, Flock &stormo,
   auto neighbours = get_neighbours(par.d, a, stormo);
   for (auto b : neighbours) {
     if (check_critical_distance(par.d_s, a, b)) {
-      sum_x += a.getPosition().x - b.getPosition().x;
-      sum_y += a.getPosition().y - b.getPosition().y;
+      sum_x += b.getPosition().x - a.getPosition().x;
+      sum_y += b.getPosition().y - a.getPosition().y;
     }
   }
 
