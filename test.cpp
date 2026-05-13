@@ -22,6 +22,12 @@ TEST_CASE("check get_distance function") {
   CHECK(get_distance(b1, b2) == doctest::Approx(2.06).epsilon(0.01));
 }
 
+TEST_CASE("check get_distance function") {
+  SingleBoid b1{{1.0, 2.3}, {3.1, 2.0}, 1};
+  SingleBoid b2;
+  CHECK(get_distance(b1, b2)== doctest::Approx(2.51).epsilon(0.01));
+}
+
 TEST_CASE("check check_critical_distance function") {
   SingleBoid b1{{0.0, 0.0}, {0.0, 0.0}, 1};
   SingleBoid b2{{2.0, 0.0}, {0.0, 0.0}, 1};
