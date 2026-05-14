@@ -68,7 +68,7 @@ TEST_CASE("check get_neighbours function - some neighbours") {
   CHECK(result.size() == 1);
 }
 
-TEST_CASE("check separation-for_singleboid function") {
+TEST_CASE("check separation_for_singleboid function") {
   Parameters par{1.0, 5.0, 2.0, 0.0, 0.0}; // s=1, d=5, d_s=2
   Flock f;
   SingleBoid a{{0.0, 0.0}, {0.0, 0.0}, 1};
