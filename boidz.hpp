@@ -1,6 +1,7 @@
-#include "rules.hpp"
 #include <algorithm>
 #include <vector>
+
+#include "rules.hpp"
 
 #ifndef BOIDZ_HPP
 #define BOIDZ_HPP
@@ -16,19 +17,19 @@ Coords operator+(const Coords &p, const Coords &q) {
 }
 
 struct Parameters {
-  double s;   // parametro di separazione
-  double d;   // parametro vicini
-  double d_s; // paramtero vicini critici
-  double a;   // parametro di allineamento
-  double c;   // parametro di coesione
+  double s;    // parametro di separazione
+  double d;    // parametro vicini
+  double d_s;  // paramtero vicini critici
+  double a;    // parametro di allineamento
+  double c;    // parametro di coesione
 };
 
 class SingleBoid {
   Coords position;
   Coords velocity;
-  int cardinality; // e che nessuno osi fiatare
+  int cardinality;  // e che nessuno osi fiatare
 
-public:
+ public:
   SingleBoid() : position{}, velocity{}, cardinality(0) {}
   SingleBoid(Coords p, Coords v, int i)
       : position(p), velocity(v), cardinality(i) {}
@@ -48,13 +49,12 @@ public:
 };
 
 class Flock {
-
-public:
+ public:
   std::vector<SingleBoid> flock{};
   Flock() : flock{} {}
   Flock(int N) : flock(N) {}
 };
 
-} // namespace boidz
+}  // namespace boidz
 
 #endif

@@ -25,7 +25,7 @@ TEST_CASE("check get_distance function") {
 TEST_CASE("check get_distance function") {
   SingleBoid b1{{1.0, 2.3}, {3.1, 2.0}, 1};
   SingleBoid b2;
-  CHECK(get_distance(b1, b2)== doctest::Approx(2.51).epsilon(0.01));
+  CHECK(get_distance(b1, b2) == doctest::Approx(2.51).epsilon(0.01));
 }
 
 TEST_CASE("check check_critical_distance function") {
@@ -68,8 +68,8 @@ TEST_CASE("check get_neighbours function - some neighbours") {
   CHECK(result.size() == 1);
 }
 
-TEST_CASE("check separation_for_singleboid function") {
-  Parameters par{1.0, 5.0, 2.0, 0.0, 0.0}; // s=1, d=5, d_s=2
+TEST_CASE("check separation-for_singleboid function") {
+  Parameters par{1.0, 5.0, 2.0, 0.0, 0.0};  // s=1, d=5, d_s=2
   Flock f;
   SingleBoid a{{0.0, 0.0}, {0.0, 0.0}, 1};
   SingleBoid b{{1.0, 0.0}, {0.0, 0.0}, 2};
@@ -80,4 +80,30 @@ TEST_CASE("check separation_for_singleboid function") {
 
   CHECK(result.x == doctest::Approx(-1.0));
   CHECK(result.y == doctest::Approx(0.0));
+}
+
+TEST_CASE("check alignment_for_single_boid function") {
+  Parameters par{0.0, 0.0, 0.0, 1.0, 0.0};
+  Flock f;
+  SingleBoid a{{1.0, 0.0}, {1.0, 0.0}, 1};
+  SingleBoid b{{0.0, 1.0}, {2.0, 1.0}, 2};
+  f.flock.push_back(a);
+  f.flock.push_back(b);
+  Coords result = alignment_for_single_boid(par, f, a);
+
+  CHECK(result.x == doctest::Approx(1.0));
+  CHECK(result.y == doctest::Approx(1.0));
+}
+
+TEST_CASE("check coesion_for_single_boid function") {
+  Parameters par{0.0, 0.0, 0.0, 0.0, 1.0};
+  Flock f;
+  SingleBoid a{{1.0, -2.0}, {0.0, 1.0}, 1};
+  SingleBoid b{{-1.0, 2.5}, {1.0, 1.0}, 2};
+  f.flock.push_back(a);
+  f.flock.push_back(b);
+  Coords result = cohesion_for_single_boid(par, f, a);
+
+  CHECK(result.x == doctest::Approx(-2.0));
+  CHECK(result.y == doctest::Approx(4.5));
 }
