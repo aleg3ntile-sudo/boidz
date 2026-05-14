@@ -130,6 +130,26 @@ namespace boidz
     }
   }
 
+  void border_restriction(Coords c, double height, double width)
+  {
+    if (c.x <= 0.)
+    {
+      c.x == width;
+    }
+    if (c.y <= 0.)
+    {
+      c.y == height;
+    }
+    if (c.x >= width)
+    {
+      c.x == 0.;
+    }
+    if (c.y >= height)
+    {
+      c.y == 0.;
+    }
+  }
+
   void check_status(Flock &stormo)
   {
     for (auto b : stormo.flock)
