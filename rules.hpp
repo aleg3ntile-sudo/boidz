@@ -25,7 +25,7 @@ bool check_critical_distance(double const &d_s, SingleBoid &b1,
   return false;
 }
 
-bool check_neighbours(double const &d, SingleBoid b1, SingleBoid b2) {
+bool check_neighbours(double const &d, SingleBoid &b1, SingleBoid &b2) {
   Coords a = b1.getPosition();
   Coords b = b2.getPosition();
 
