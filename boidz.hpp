@@ -68,13 +68,20 @@ public:
   // Coords update_Velocity_in_time_for_single_boid() {}
   void setupSprite(sf::Texture &texture) {
     sprite.setTexture(texture);
-    sf::FloatRect bounds = sprite.getLocalBounds();
-    sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    sprite.setScale(0.5f, 0.5f);
-  } // per settare la texture
+    sf::FloatRect bounds = sprite.getLocalBounds(); // confini dell'immagine
+    sprite.setOrigin(
+        bounds.width / 2.f,
+        bounds.height /
+            2.f); // origine dell'immagine del boid che poi manipoliamo
+    sprite.setScale(0.5f, 0.5f); // quanto va scalata ( anche in base ai
+                                 // parametri e alla posizione dell'origin)
+  }                              // per settare la texture
 
-  void aggiornaSprite(float W, float H) {
-    sprite.setPosition(position.x, position.y);
+  void aggiornaSprite() {
+    sprite.setPosition(
+        position.x, position.y); // sprite f aparte dei "transformable" di sfml,
+                                 // quindi eredita questo e gli altri metodi
+                                 // senza bisogno di includerli manualmente
   }
 
   void draw(sf::RenderWindow &window) const { window.draw(sprite); }

@@ -21,10 +21,12 @@ int main() {
   std::random_device r;
   std::default_random_engine eng(r());
   std::uniform_real_distribution<double> px{0., 800.};
+  // importante avere come limiti le dimensioni dello schermo
   std::uniform_real_distribution<double> py{0., 600.};
   std::uniform_real_distribution<double> vel{0., 50.};
+  // che velocità sarebbe indicata?
 
-  // funzione per generare lo stormo con i parametri di input
+  // funzione per generare lo stormo
   for (int j{0}; j != 10; ++j) {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
@@ -34,14 +36,13 @@ int main() {
 
   check_status(stormo);
 
-  // per ogni boids nel vettore
   for (auto &x : stormo.flock) {
-    // per settare posizioni, scalare
+    // per settare posizioni, scalare (è un metodo)
     x.setupSprite(texture);
   }
 
   // crea classe parametri
-  Parameters params{0.1, 50.0, 15.0, 0.05, 0.01};
+  Parameters params{0.1, 50.0, 15.0, 0.05, 0.01}; // trova parametri sensati
   /*Parameters params;
   std::cout << "Separazione (s): ";      std::cin >> params.s;
   std::cout << "Raggio vicini (d): ";    std::cin >> params.d;
@@ -52,12 +53,11 @@ int main() {
 
   // crea orologio
   sf::Clock clock;
-
-  clock.restart();
   while (window.isOpen()) {
     double dt = clock.restart().asSeconds();
 
-    sf::Event event;
+    sf::Event event; // tiene la finestra viva anche se non crrreiamo eventi,
+                     // poll event evita che la finestra si blocchi
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         window.close();
@@ -70,7 +70,10 @@ int main() {
       x.update_Velocity_with_rules_for_single_boid(ruled_velocity);
       x.update_Position_in_time_for_single_boid(dt);
       x.applyBorderRestriction(800., 600.);
-      x.aggiornaSprite(800.f, 600.f);
+      x.aggiornaSprite();
+      // problema di architettura del loop, i boids si aggiornano con le
+      // velocità e poszioni future dello stormo, anzichè reagire tuti a quelle
+      // presenti?
     }
 
     // render
