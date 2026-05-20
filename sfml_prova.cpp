@@ -7,7 +7,7 @@
 using namespace boidz;
 int main() {
   sf::RenderWindow window(
-      sf::VideoMode(800, 600),  // inizializzerò poi height e width (o lasciamo
+      sf::VideoMode(1800, 1600),  // inizializzerò poi height e width (o lasciamo
                                 // sempre fissi 600-800?)
       "Boids");                 // informazioni sulla finestra grafica
   window.setFramerateLimit(60); // fps
@@ -20,14 +20,14 @@ int main() {
   Flock stormo{};
   std::random_device r;
   std::default_random_engine eng(r());
-  std::uniform_real_distribution<double> px{0., 800.};
+  std::uniform_real_distribution<double> px{0., 1800.};
   // importante avere come limiti le dimensioni dello schermo
-  std::uniform_real_distribution<double> py{0., 600.};
+  std::uniform_real_distribution<double> py{0., 1600.};
   std::uniform_real_distribution<double> vel{0., 50.};
   // che velocità sarebbe indicata?
 
   // funzione per generare lo stormo
-  for (int j{0}; j != 10; ++j) {
+  for (int j{0}; j != 100; ++j) {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
     SingleBoid b = SingleBoid(p, v, j);
@@ -42,7 +42,7 @@ int main() {
   }
 
   // crea classe parametri
-  Parameters params{0.1, 50.0, 15.0, 0.05, 0.01}; // trova parametri sensati
+  Parameters params{0.1, 50.0, 20.0, 0.1, 0.01}; // trova parametri sensati
   /*Parameters params;
   std::cout << "Separazione (s): ";      std::cin >> params.s;
   std::cout << "Raggio vicini (d): ";    std::cin >> params.d;
@@ -69,7 +69,7 @@ int main() {
           update_Velocity_with_rules_for_single_boid(params, stormo, x);
       x.update_Velocity_with_rules_for_single_boid(ruled_velocity);
       x.update_Position_in_time_for_single_boid(dt);
-      x.applyBorderRestriction(800., 600.);
+      x.applyBorderRestriction(1800., 1600.);
       x.aggiornaSprite();
       // problema di architettura del loop, i boids si aggiornano con le
       // velocità e poszioni future dello stormo, anzichè reagire tuti a quelle
