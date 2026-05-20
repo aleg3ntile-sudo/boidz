@@ -48,6 +48,10 @@ std::vector<SingleBoid> get_neighbours(double const &distance, SingleBoid &s,
   return neighbours;
 }
 
+void remove_boid_from_neighbours(std::vector<SingleBoid> &neighbours){
+  neighbours.clear();
+}
+
 Coords separation_for_single_boid(Parameters const &par, Flock &stormo,
                                   SingleBoid &a) {
   double sum_x{0};
