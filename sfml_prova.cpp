@@ -15,7 +15,7 @@ int main()
 
   // per importare grafica png
   sf::Texture texture; // creiamo una texture
-  texture.loadFromFile("boidsred_real.png");
+  texture.loadFromFile("bobsenzasfondo.png");
 
   // main originale
   Flock stormo{};
@@ -45,7 +45,7 @@ int main()
   }
 
   // crea classe parametri
-  Parameters params{0.8, 200.0, 50.0, 0.5, 0.4}; // trova parametri sensati
+  Parameters params{0.2, 200.0, 100.0, 1.2, 0.4}; // trova parametri sensati
   /*Parameters params;
   std::cout << "Separazione (s): ";      std::cin >> params.s;
   std::cout << "Raggio vicini (d): ";    std::cin >> params.d;
