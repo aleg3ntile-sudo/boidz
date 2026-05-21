@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 namespace boidz {
@@ -48,7 +49,7 @@ public:
     velocity = updated_velocity;
   }
 
-  void applyBorderRestriction(double width, double height) {
+  void BorderRestriction(double width, double height) {
     if (position.x < 0.)
       position.x += width;
     else {
@@ -63,6 +64,14 @@ public:
       if (position.y >= height) {
         position.y -= height;
       }
+    }
+  }
+
+  void SpeedRestriction(double speed_limit) {
+    double speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+    if (speed > speed_limit) {
+      velocity.x = velocity.x * speed_limit / speed;
+      velocity.y = velocity.y * speed_limit / speed;
     }
   }
   // Coords update_Velocity_in_time_for_single_boid() {}

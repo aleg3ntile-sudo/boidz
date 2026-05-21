@@ -27,7 +27,7 @@ int main() {
   // che velocità sarebbe indicata?
 
   // funzione per generare lo stormo
-  for (int j{0}; j != 100; ++j) {
+  for (int j{0}; j != 20; ++j) {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
     SingleBoid b = SingleBoid(p, v, j);
@@ -42,7 +42,7 @@ int main() {
   }
 
   // crea classe parametri
-  Parameters params{0.2, 200.0, 100.0, 1.2, 0.4}; // trova parametri sensati
+  Parameters params{0.4, 100.0, 50.0, 0.3, 0.2}; // trova parametri sensati
   /*Parameters params;
   std::cout << "Separazione (s): ";      std::cin >> params.s;
   std::cout << "Raggio vicini (d): ";    std::cin >> params.d;
@@ -84,7 +84,8 @@ int main() {
       stormo.flock[i].update_Velocity_with_rules_for_single_boid(
           updated_velocities[i]);
       stormo.flock[i].update_Position_in_time_for_single_boid(dt);
-      stormo.flock[i].applyBorderRestriction(800., 600.);
+      stormo.flock[i].BorderRestriction(800., 600.);
+      stormo.flock[i].SpeedRestriction(130);
       stormo.flock[i].aggiornaSprite();
     }
 

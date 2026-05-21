@@ -1,7 +1,6 @@
 #ifndef RULES_HPP
 #define RULES_HPP
 
-#include <cmath>
 #include <iostream>
 
 #include "boidz.hpp"
@@ -72,16 +71,15 @@ Coords alignment_for_single_boid(const Parameters &par, const Flock &stormo,
                                  const SingleBoid &s) {
   Coords v_alignment;
   Coords v_sum{0., 0.};
-  for (auto b : stormo.flock) {
-    if (b.getCardinality() != s.getCardinality()) {
-      v_sum.x += b.getVelocity().x;
-      v_sum.y += b.getVelocity().y;
-    }
+  auto neighbours = get_neighbours(par.d, s, stormo);
+  int n = neighbours.size();
+  for (auto b : neighbours) {
+    v_sum.x += b.getVelocity().x;
+    v_sum.y += b.getVelocity().y;
   }
-  if (stormo.flock.size() > 1) {
-    v_alignment = {
-        par.a * (v_sum.x / (stormo.flock.size() - 1) - s.getVelocity().x),
-        par.a * (v_sum.y / (stormo.flock.size() - 1) - s.getVelocity().y)};
+  if (neighbours.size() > 1) {
+    v_alignment = {par.a * (v_sum.x / n - s.getVelocity().x),
+                   par.a * (v_sum.y / n - s.getVelocity().y)};
     return v_alignment;
   } else {
     v_alignment = {0.0, 0.0};
@@ -93,14 +91,14 @@ Coords cohesion_for_single_boid(const Parameters &par, const Flock &stormo,
                                 const SingleBoid &s) {
   Coords com{0., 0.};
   Coords v_cohesion;
-  int n = stormo.flock.size() - 1;
-  for (auto b : stormo.flock) {
-    if (b.getCardinality() != s.getCardinality()) {
-      com.x += b.getPosition().x;
-      com.y += b.getPosition().y;
-    }
+  auto neighbours = get_neighbours(par.d, s, stormo);
+  int n = neighbours.size();
+  for (auto b : neighbours) {
+    com.x += b.getPosition().x;
+    com.y += b.getPosition().y;
   }
-  if (stormo.flock.size() > 1) {
+
+  if (neighbours.size() > 1) {
     v_cohesion = {par.c * ((com.x / n) - s.getPosition().x),
                   par.c * ((com.y / n) - s.getPosition().y)};
     return v_cohesion;
