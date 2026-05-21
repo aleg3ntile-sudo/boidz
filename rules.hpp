@@ -7,15 +7,15 @@
 #include "boidz.hpp"
 
 namespace boidz {
-double get_distance(SingleBoid &b1, SingleBoid &b2) {
+double get_distance(const SingleBoid &b1, const SingleBoid &b2) {
   Coords a = b1.getPosition();
   Coords b = b2.getPosition();
 
   return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
 }
 
-bool check_critical_distance(double const &d_s, SingleBoid &b1,
-                             SingleBoid &b2) {
+bool check_critical_distance(double const &d_s, const SingleBoid &b1,
+                             const SingleBoid &b2) {
   Coords a = b1.getPosition();
   Coords b = b2.getPosition();
 
@@ -25,7 +25,7 @@ bool check_critical_distance(double const &d_s, SingleBoid &b1,
   return false;
 }
 
-bool check_neighbours(double const &d, SingleBoid &b1, SingleBoid &b2) {
+bool check_neighbours(double const &d, const SingleBoid &b1, SingleBoid &b2) {
   Coords a = b1.getPosition();
   Coords b = b2.getPosition();
 
@@ -35,8 +35,8 @@ bool check_neighbours(double const &d, SingleBoid &b1, SingleBoid &b2) {
   return false;
 }
 
-std::vector<SingleBoid> get_neighbours(double const &distance, SingleBoid &s,
-                                       Flock const &f) {
+std::vector<SingleBoid> get_neighbours(double const &distance,
+                                       const SingleBoid &s, Flock const &f) {
   std::vector<SingleBoid> neighbours{};
   for (auto x : f.flock) {
     if (check_neighbours(distance, s, x) == true) {
@@ -48,12 +48,12 @@ std::vector<SingleBoid> get_neighbours(double const &distance, SingleBoid &s,
   return neighbours;
 }
 
-void remove_boid_from_neighbours(std::vector<SingleBoid> &neighbours){
+void remove_boid_from_neighbours(std::vector<SingleBoid> &neighbours) {
   neighbours.clear();
 }
 
-Coords separation_for_single_boid(Parameters const &par, Flock &stormo,
-                                  SingleBoid &a) {
+Coords separation_for_single_boid(const Parameters &par, const Flock &stormo,
+                                  const SingleBoid &a) {
   double sum_x{0};
   double sum_y{0};
   auto neighbours = get_neighbours(par.d, a, stormo);
@@ -68,8 +68,8 @@ Coords separation_for_single_boid(Parameters const &par, Flock &stormo,
   return v_separation;
 }
 
-Coords alignment_for_single_boid(Parameters const &par, Flock &stormo,
-                                 SingleBoid &s) {
+Coords alignment_for_single_boid(const Parameters &par, const Flock &stormo,
+                                 const SingleBoid &s) {
   Coords v_alignment;
   Coords v_sum{0., 0.};
   for (auto b : stormo.flock) {
@@ -89,8 +89,8 @@ Coords alignment_for_single_boid(Parameters const &par, Flock &stormo,
   }
 }
 
-Coords cohesion_for_single_boid(Parameters const &par, Flock &stormo,
-                                SingleBoid &s) {
+Coords cohesion_for_single_boid(const Parameters &par, const Flock &stormo,
+                                const SingleBoid &s) {
   Coords com{0., 0.};
   Coords v_cohesion;
   int n = stormo.flock.size() - 1;
@@ -110,8 +110,6 @@ Coords cohesion_for_single_boid(Parameters const &par, Flock &stormo,
   }
 }
 
-
-
 void check_status(Flock &stormo) {
   for (auto b : stormo.flock) {
     std::cout << "Cardinality : " << b.getCardinality() << '\n'
@@ -122,13 +120,12 @@ void check_status(Flock &stormo) {
   }
 }
 
-Coords create_velocity_with_rules_for_single_boid(Parameters par, Flock stormo,
-                                                  SingleBoid b) {
-  auto new_velocity = b.getVelocity();
-  new_velocity = new_velocity + separation_for_single_boid(par, stormo, b) +
-                 alignment_for_single_boid(par, stormo, b) +
-                 cohesion_for_single_boid(par, stormo, b);
-  return new_velocity;
+Coords create_velocity_with_rules_for_single_boid(const Parameters &par,
+                                                  const Flock &stormo,
+                                                  const SingleBoid &b) {
+  return b.getVelocity() + separation_for_single_boid(par, stormo, b) +
+         alignment_for_single_boid(par, stormo, b) +
+         cohesion_for_single_boid(par, stormo, b);
 }
 } // namespace boidz
 #endif

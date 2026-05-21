@@ -73,9 +73,9 @@ public:
         bounds.width / 2.f,
         bounds.height /
             2.f); // origine dell'immagine del boid che poi manipoliamo
-    sprite.setScale(0.5f, 0.5f); // quanto va scalata ( anche in base ai
-                                 // parametri e alla posizione dell'origin)
-  }                              // per settare la texture
+    sprite.setScale(0.07f, 0.07f); // quanto va scalata ( anche in base ai
+                                   // parametri e alla posizione dell'origin)
+  }                                // per settare la texture
 
   void aggiornaSprite() {
     sprite.setPosition(
