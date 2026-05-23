@@ -77,7 +77,7 @@ Coords alignment_for_single_boid(const Parameters &par, const Flock &stormo,
     v_sum.x += b.getVelocity().x;
     v_sum.y += b.getVelocity().y;
   }
-  if (neighbours.size() > 1) {
+  if (neighbours.size() >= 1) {
     v_alignment = {par.a * (v_sum.x / n - s.getVelocity().x),
                    par.a * (v_sum.y / n - s.getVelocity().y)};
     return v_alignment;
@@ -98,7 +98,7 @@ Coords cohesion_for_single_boid(const Parameters &par, const Flock &stormo,
     com.y += b.getPosition().y;
   }
 
-  if (neighbours.size() > 1) {
+  if (neighbours.size() >= 1) {
     v_cohesion = {par.c * ((com.x / n) - s.getPosition().x),
                   par.c * ((com.y / n) - s.getPosition().y)};
     return v_cohesion;
@@ -125,5 +125,5 @@ Coords create_velocity_with_rules_for_single_boid(const Parameters &par,
          alignment_for_single_boid(par, stormo, b) +
          cohesion_for_single_boid(par, stormo, b);
 }
-} // namespace boidz
+}  // namespace boidz
 #endif
