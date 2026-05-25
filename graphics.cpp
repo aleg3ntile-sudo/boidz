@@ -14,8 +14,8 @@ int main()
         "Boids");                 // informazioni sulla finestra grafica
     window.setFramerateLimit(60); // fps
 
-    // sf::Texture texture; // creiamo una texture
-    // texture.loadFromFile("bobsenzasfondo.png");
+    //sf::Texture texture; // creiamo una texture
+    //texture.loadFromFile("bobsenzasfondo.png");
 
     sf::CircleShape dot(1.f);
     dot.setFillColor(sf::Color::Red);
@@ -41,9 +41,9 @@ int main()
     //{
     //     // per settare posizioni, scalare (è un metodo)
     //     x.setupSprite(texture);
-    // }
+    //}
 
-    Parameters params{1.2, 50.0, 7.5, 0.3, 0.02};
+    Parameters params{0.7, 50.0, 5.0, 0.3, 0.02};
 
     sf::Clock clock;
     while (window.isOpen())
