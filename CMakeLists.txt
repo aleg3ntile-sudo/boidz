@@ -37,7 +37,7 @@ find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
 
 # dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
-add_executable(progettoboids main.cpp graphics.cpp sfml_prova.cpp stats.cpp stdinput.cpp)
+add_executable(progettoboids graphics.cpp sfml_prova.cpp stats.cpp stdinput.cpp)
 # nel caso si usi SFML. analogamente per eventuali altre librerie
 target_link_libraries(progettoboids PRIVATE sfml-graphics)
 
