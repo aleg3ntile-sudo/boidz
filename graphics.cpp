@@ -8,12 +8,10 @@
 
 // ipotetico main smfl
 using namespace boidz;
-int main() {
-  sf::RenderWindow window(
-      sf::VideoMode(800, 600),  // inizializzerò poi height e width (o lasciamo
-                                // sempre fissi 600-800?)
-      "Boids");                 // informazioni sulla finestra grafica
-  window.setFramerateLimit(60); // fps
+int main()
+{
+  sf::RenderWindow window(sf::VideoMode(800, 600), "Boids");
+  window.setFramerateLimit(60);
 
   sf::RenderWindow window2(sf::VideoMode(800, 600), "Statistics");
   window.setFramerateLimit(60);
@@ -25,12 +23,13 @@ int main() {
   Flock stormo{};
   std::random_device r;
   std::default_random_engine eng(r());
-  std::uniform_real_distribution<double> px{0., 200.};
+  std::uniform_real_distribution<double> px{0., 800.};
   // importante avere come limiti le dimensioni dello schermo
-  std::uniform_real_distribution<double> py{0., 150.};
+  std::uniform_real_distribution<double> py{0., 600.};
   std::uniform_real_distribution<double> vel{-100., 100.};
   // che velocità sarebbe indicata?
-  for (int j{0}; j != 100; ++j) {
+  for (int j{0}; j != 100; ++j)
+  {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
     SingleBoid b = SingleBoid(p, v, j);
@@ -71,97 +70,95 @@ int main() {
   axis[3].color = axis_color;
 
   std::vector<Coords> vector_of_mean_speeds{};
+  std::vector<double> time_of_simulation{};
 
-  while (window.isOpen() || window2.isOpen()) {
-
-    sf::Event event;
+  while (window.isOpen() || window2.isOpen())
+  {
     double timer = 0.;
+    while (window.isOpen())
+    {
+      sf::Event event;
+      while (window.pollEvent(event))
+      {
+        if (event.type == sf::Event::Closed)
+        {
+          window.close();
+        }
+      }
 
-    while (window.isOpen()) {
       double dt = clock.restart().asSeconds();
       timer += dt;
-      double delay = 20.;
-      sf::Event event; // tiene la finestra viva anche se non crrreiamo eventi,
-                       // poll event evita che la finestra si blocchi
-      while (window.pollEvent(event)) {
-
-        if (event.type == sf::Event::Closed) {
-          window.close();
-        } else {
-
-          double dt = clock.restart().asSeconds();
-          std::vector<Coords> updated_velocities{};
-          for (auto &x : stormo.flock) {
-            Coords new_velocity = create_velocity_with_rules_for_single_boid(
-                params, stormo, x, hunter);
-            updated_velocities.push_back(new_velocity);
-          }
-          for (long unsigned int i = 0; i != stormo.flock.size(); ++i) {
-            stormo.flock[i].update_Velocity_with_rules_for_single_boid(
-                updated_velocities[i]);
-            stormo.flock[i].update_Position_in_time_for_single_boid(dt);
-            stormo.flock[i].BorderRestriction(800., 600.);
-            stormo.flock[i].SpeedRestriction(130);
-            stormo.flock[i].aggiornaSprite();
-          }
-
-          Coords new_hunt_velocity = hunt(hunter, stormo, params);
-          hunter.update_Velocity_with_rules_for_single_boid(new_hunt_velocity);
-          hunter.update_Position_in_time_for_single_boid(dt);
-          hunter.BorderRestriction(800., 600.);
-          hunter.SpeedRestriction(100);
-          hunter.aggiornaSprite();
-
-          // render
-          window.clear(sf::Color(15, 17, 26)); // blu notte
-          for (auto &b : stormo.flock) {
-            dot.setPosition(b.getPosition().x, b.getPosition().y);
-            // b.draw(window);
-            window.draw(dot);
-          }
-          dot.setPosition(hunter.getPosition().x, hunter.getPosition().y);
-          window.draw(dot);
-
-          window.display();
-        }
+      double delay = 20;
+      std::vector<Coords> updated_velocities{};
+      for (auto &x : stormo.flock)
+      {
+        Coords new_velocity = create_velocity_with_rules_for_single_boid(
+            params, stormo, x, hunter);
+        updated_velocities.push_back(new_velocity);
+      }
+      for (long unsigned int i = 0; i != stormo.flock.size(); ++i)
+      {
+        stormo.flock[i].update_Velocity_with_rules_for_single_boid(
+            updated_velocities[i]);
+        stormo.flock[i].update_Position_in_time_for_single_boid(dt);
+        stormo.flock[i].BorderRestriction(800., 600.);
+        stormo.flock[i].SpeedRestriction(130);
+        stormo.flock[i].aggiornaSprite();
       }
 
-      sf::Event event2;
-      while (window2.pollEvent(event2)) {
-        if (event2.type == sf::Event::Closed) {
-          window2.close();
-        } else {
-          double dt2 = clock.restart().asSeconds();
-          Coords mean_speed_for_cycle = mean_velocity(stormo);
-          vector_of_mean_speeds.push_back(mean_speed_for_cycle);
-
-          window2.clear();
-
-          window2.draw(axis);
-          for (auto &s : vector_of_mean_speeds) {
-            double output_speed =
-                std::sqrt(std::pow(s.x, 2) + std::pow(s.y, 2));
-            point.setPosition(dt2 + 50.f, output_speed);
-            window2.draw(point);
-          }
-          window2.display();
-        }
-        if (timer >= delay) {
-          Coords new_hunt_velocity = hunt(hunter, stormo, params);
-          hunter.update_Velocity_with_rules_for_single_boid(new_hunt_velocity);
-          hunter.update_Position_in_time_for_single_boid(dt);
-          hunter.BorderRestriction(800., 600.);
-          hunter.SpeedRestriction(100);
-          hunter.aggiornaSprite();
-        }
-        // render
-        window.clear(sf::Color(15, 17, 26)); // blu notte
-        for (auto &b : stormo.flock) {
-          dot.setPosition(b.getPosition().x, b.getPosition().y);
-          // b.draw(window);
-          window.draw(dot);
-        }
+      if (timer >= delay)
+      {
+        Coords new_hunt_velocity = hunt(hunter, stormo, params);
+        hunter.update_Velocity_with_rules_for_single_boid(new_hunt_velocity);
+        hunter.update_Position_in_time_for_single_boid(dt);
+        hunter.BorderRestriction(800., 600.);
+        hunter.SpeedRestriction(100);
+        hunter.aggiornaSprite();
       }
+
+      Coords mean_speed_for_cycle = mean_velocity(stormo);
+      vector_of_mean_speeds.push_back(mean_speed_for_cycle);
+      time_of_simulation.push_back(dt);
+
+      // render
+      window.clear(sf::Color(15, 17, 26)); // blu notte
+      for (auto &b : stormo.flock)
+      {
+        dot.setPosition(b.getPosition().x, b.getPosition().y);
+        // b.draw(window);
+        window.draw(dot);
+      }
+      dot.setPosition(hunter.getPosition().x, hunter.getPosition().y);
+      window.draw(dot);
+      window.display();
     }
-  }
-}
+
+    while (window2.isOpen())
+    {
+      sf::Event event2;
+      while (window2.pollEvent(event2))
+      {
+        if (event2.type == sf::Event::Closed)
+        {
+          window2.close();
+        }
+      }
+      auto first = vector_of_mean_speeds.begin();
+      auto last = vector_of_mean_speeds.end();
+      auto tfirst = time_of_simulation.begin();
+      auto tlast = time_of_simulation.end();
+
+      window2.clear();
+
+      window2.draw(axis);
+
+      for (; first != last && tfirst != tlast; ++first, ++tfirst)
+      {
+        double output_speed = std::sqrt(std::pow((*first).x, 2) + std::pow((*first).y, 2));
+        point.setPosition(*tfirst, output_speed);
+        window2.draw(point);
+      }
+      window2.display();
+    }
+  } // while ||
+} // main
