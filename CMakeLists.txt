@@ -37,19 +37,23 @@ find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
 
 # dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
-add_executable(progetto main.cpp file1.cpp file2.cpp)
+add_executable(progettoboids main.cpp graphics.cpp sfml_prova.cpp stats.cpp stdinput.cpp)
 # nel caso si usi SFML. analogamente per eventuali altre librerie
-target_link_libraries(progetto PRIVATE sfml-graphics)
+target_link_libraries(progettoboids PRIVATE sfml-graphics)
 
 # aggiungere eventuali altri eseguibili
+
 
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 if (BUILD_TESTING)
 
-  # aggiungi l'eseguibile progetto.t
-  add_executable(progetto.t file.t.cpp)
-  # aggiungi l'eseguibile progetto.t alla lista dei test
-  add_test(NAME progetto.t COMMAND progetto.t)
-
+  # aggiungi l'eseguibile testboids.t
+  add_executable(testboids.t test.cpp ) #andranno aggiunti i file sorgente usati nei test 
+  
+  # Se i test (o stats.cpp) usano SFML, linka la libreria anche qui
+  # target_link_libraries(testboids.t PRIVATE sfml-graphics)
+  
+  # aggiungi l'eseguibile testboids alla lista dei test
+  add_test(NAME testboids.t COMMAND testboids.t)
 endif()

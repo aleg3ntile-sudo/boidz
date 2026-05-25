@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 namespace boidz {
@@ -48,7 +49,7 @@ public:
     velocity = updated_velocity;
   }
 
-  void applyBorderRestriction(double width, double height) {
+  void BorderRestriction(double width, double height) {
     if (position.x < 0.)
       position.x += width;
     else {
@@ -65,6 +66,14 @@ public:
       }
     }
   }
+
+  void SpeedRestriction(double speed_limit) {
+    double speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+    if (speed > speed_limit) {
+      velocity.x = velocity.x * speed_limit / speed;
+      velocity.y = velocity.y * speed_limit / speed;
+    }
+  }
   // Coords update_Velocity_in_time_for_single_boid() {}
   void setupSprite(sf::Texture &texture) {
     sprite.setTexture(texture);
@@ -73,9 +82,9 @@ public:
         bounds.width / 2.f,
         bounds.height /
             2.f); // origine dell'immagine del boid che poi manipoliamo
-    sprite.setScale(0.5f, 0.5f); // quanto va scalata ( anche in base ai
-                                 // parametri e alla posizione dell'origin)
-  }                              // per settare la texture
+    sprite.setScale(0.07f, 0.07f); // quanto va scalata ( anche in base ai
+                                   // parametri e alla posizione dell'origin)
+  }                                // per settare la texture
 
   void aggiornaSprite() {
     sprite.setPosition(

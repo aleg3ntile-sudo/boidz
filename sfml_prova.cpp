@@ -8,10 +8,10 @@ using namespace boidz;
 int main()
 {
   sf::RenderWindow window(
-      sf::VideoMode(1800, 1600), // inizializzerò poi height e width (o lasciamo
-                                 // sempre fissi 600-800?)
-      "Boids");                  // informazioni sulla finestra grafica
-  window.setFramerateLimit(60);  // fps
+      sf::VideoMode(800, 600),  // inizializzerò poi height e width (o lasciamo
+                                // sempre fissi 600-800?)
+      "Boids");                 // informazioni sulla finestra grafica
+  window.setFramerateLimit(60); // fps
 
   // per importare grafica png
   sf::Texture texture; // creiamo una texture
@@ -21,14 +21,14 @@ int main()
   Flock stormo{};
   std::random_device r;
   std::default_random_engine eng(r());
-  std::uniform_real_distribution<double> px{0., 1800.};
+  std::uniform_real_distribution<double> px{0., 800.};
   // importante avere come limiti le dimensioni dello schermo
-  std::uniform_real_distribution<double> py{0., 1600.};
-  std::uniform_real_distribution<double> vel{0., 50.};
+  std::uniform_real_distribution<double> py{0., 600.};
+  std::uniform_real_distribution<double> vel{-50., 50.};
   // che velocità sarebbe indicata?
 
   // funzione per generare lo stormo
-  for (int j{0}; j != 100; ++j)
+  for (int j{0}; j != 20; ++j)
   {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
@@ -45,7 +45,7 @@ int main()
   }
 
   // crea classe parametri
-  Parameters params{0.2, 200.0, 100.0, 1.2, 0.4}; // trova parametri sensati
+  Parameters params{0.4, 100.0, 50.0, 0.3, 0.2}; // trova parametri sensati
   /*Parameters params;
   std::cout << "Separazione (s): ";      std::cin >> params.s;
   std::cout << "Raggio vicini (d): ";    std::cin >> params.d;
@@ -83,14 +83,17 @@ int main()
     std::vector<Coords> updated_velocities{};
     for (auto &x : stormo.flock)
     {
-      Coords new_velocity = create_velocity_with_rules_for_single_boid(params, stormo, x);
+      Coords new_velocity =
+          create_velocity_with_rules_for_single_boid(params, stormo, x);
       updated_velocities.push_back(new_velocity);
     }
     for (int i = 0; i != stormo.flock.size(); ++i)
     {
-      stormo.flock[i].update_Velocity_with_rules_for_single_boid(updated_velocities[i]);
+      stormo.flock[i].update_Velocity_with_rules_for_single_boid(
+          updated_velocities[i]);
       stormo.flock[i].update_Position_in_time_for_single_boid(dt);
-      stormo.flock[i].applyBorderRestriction(1800., 1600.);
+      stormo.flock[i].BorderRestriction(800., 600.);
+      stormo.flock[i].SpeedRestriction(130);
       stormo.flock[i].aggiornaSprite();
     }
 
