@@ -23,10 +23,10 @@ int main() {
   Flock stormo{};
   std::random_device r;
   std::default_random_engine eng(r());
-  std::uniform_real_distribution<double> px{0., 800.};
+  std::uniform_real_distribution<double> px{0., 200.};
   // importante avere come limiti le dimensioni dello schermo
-  std::uniform_real_distribution<double> py{0., 600.};
-  std::uniform_real_distribution<double> vel{-50., 50.};
+  std::uniform_real_distribution<double> py{0., 150.};
+  std::uniform_real_distribution<double> vel{-100., 100.};
   // che velocità sarebbe indicata?
   for (int j{0}; j != 100; ++j) {
     Coords p{px(eng), py(eng)};
@@ -46,9 +46,13 @@ int main() {
   Parameters params{1.2, 50.0, 7.5, 0.3, 0.02, 1., 0.5};
 
   sf::Clock clock;
+
+  double timer = 0.;
+
   while (window.isOpen()) {
     double dt = clock.restart().asSeconds();
-
+    timer += dt;
+    double delay = 20.;
     sf::Event event;  // tiene la finestra viva anche se non crrreiamo eventi,
                       // poll event evita che la finestra si blocchi
     while (window.pollEvent(event)) {
@@ -82,13 +86,14 @@ int main() {
       stormo.flock[i].aggiornaSprite();
     }
 
-    Coords new_hunt_velocity = hunt(hunter, stormo, params);
-    hunter.update_Velocity_with_rules_for_single_boid(new_hunt_velocity);
-    hunter.update_Position_in_time_for_single_boid(dt);
-    hunter.BorderRestriction(800., 600.);
-    hunter.SpeedRestriction(100);
-    hunter.aggiornaSprite();
-
+    if (timer >= delay) {
+      Coords new_hunt_velocity = hunt(hunter, stormo, params);
+      hunter.update_Velocity_with_rules_for_single_boid(new_hunt_velocity);
+      hunter.update_Position_in_time_for_single_boid(dt);
+      hunter.BorderRestriction(800., 600.);
+      hunter.SpeedRestriction(100);
+      hunter.aggiornaSprite();
+    }
     // render
     window.clear(sf::Color(15, 17, 26));  // blu notte
     for (auto &b : stormo.flock) {
