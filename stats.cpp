@@ -1,18 +1,19 @@
 #include <vector>
 #include "boidz.hpp"
 #include "rules.hpp"
+#include <cmath>
 
 using namespace boidz;
 
-Coords mean_velocity(Flock f)
+Coords mean_velocity(Flock const &f)
 {
     Coords mean_velocity{0., 0.};
     if (f.flock.size() != 0)
     {
         for (auto &b : f.flock)
         {
-            mean_velocity.x += b.getVelocity().x;
-            mean_velocity.y += b.getVelocity().y;
+            mean_velocity.x += std::abs(b.getVelocity().x);
+            mean_velocity.y += std::abs(b.getVelocity().y);
         }
         mean_velocity.x = (mean_velocity.x / f.flock.size());
         mean_velocity.y = (mean_velocity.y / f.flock.size());
@@ -24,7 +25,7 @@ Coords mean_velocity(Flock f)
     }
 }
 
-Coords centre_of_mass_position(Flock f)
+Coords centre_of_mass_position(Flock const &f)
 {
     Coords centre_of_mass{0., 0.};
     if (f.flock.size() != 0)
