@@ -19,6 +19,9 @@ int main()
   sf::CircleShape dot(1.f);
   dot.setFillColor(sf::Color::Red);
 
+  sf::CircleShape dot2(2.f);
+  dot2.setFillColor(sf::Color::Green);
+
   // main originale
   Flock stormo{};
   std::random_device r;
@@ -118,7 +121,6 @@ int main()
 
       Coords mean_speed_for_cycle = mean_velocity(stormo);
       vector_of_mean_speeds.push_back(mean_speed_for_cycle);
-      time_of_simulation.push_back(dt);
 
       // render
       window.clear(sf::Color(15, 17, 26)); // blu notte
@@ -128,8 +130,8 @@ int main()
         // b.draw(window);
         window.draw(dot);
       }
-      dot.setPosition(hunter.getPosition().x, hunter.getPosition().y);
-      window.draw(dot);
+      dot2.setPosition(hunter.getPosition().x, hunter.getPosition().y);
+      window.draw(dot2);
       window.display();
     }
 
@@ -143,6 +145,12 @@ int main()
           window2.close();
         }
       }
+
+      for (long unsigned int i{vector_of_mean_speeds.size()}; i != 0; --i)
+      {
+        time_of_simulation.push_back(i);
+      }
+
       auto first = vector_of_mean_speeds.begin();
       auto last = vector_of_mean_speeds.end();
       auto tfirst = time_of_simulation.begin();
@@ -155,7 +163,7 @@ int main()
       for (; first != last && tfirst != tlast; ++first, ++tfirst)
       {
         double output_speed = std::sqrt(std::pow((*first).x, 2) + std::pow((*first).y, 2));
-        point.setPosition(*tfirst, output_speed);
+        point.setPosition(*tfirst + 50.f, 550.f - output_speed);
         window2.draw(point);
       }
       window2.display();
