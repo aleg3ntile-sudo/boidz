@@ -28,8 +28,8 @@ int main()
   std::default_random_engine eng(r());
   std::uniform_real_distribution<double> px{0., 800.};
   // importante avere come limiti le dimensioni dello schermo
-  std::uniform_real_distribution<double> py{0., 600.};
-  std::uniform_real_distribution<double> vel{-100., 100.};
+  std::uniform_real_distribution<double> py{0., 150.};
+  std::uniform_real_distribution<double> vel{-300., 300.};
   // che velocità sarebbe indicata?
   for (int j{0}; j != 100; ++j)
   {
@@ -104,6 +104,7 @@ int main()
       stormo.flock[i].update_Position_in_time_for_single_boid(dt);
       stormo.flock[i].BorderRestriction(800., 600.);
       stormo.flock[i].SpeedRestriction(130);
+      stormo.flock[i].update_Shape();
     }
 
     if (timer >= delay)
@@ -113,19 +114,21 @@ int main()
       hunter.update_Position_in_time_for_single_boid(dt);
       hunter.BorderRestriction(800., 600.);
       hunter.SpeedRestriction(100);
-      hunter.aggiornaSprite();
     }
 
     Coords mean_speed_for_cycle = mean_velocity(stormo);
     vector_of_mean_speeds.push_back(mean_speed_for_cycle);
 
     // render
-    window.clear(sf::Color(15, 17, 26)); // blu notte
+    window.clear(sf::Color(15, 17, 26));  // blu notte
     for (auto &b : stormo.flock)
+    // {
+    //   dot.setPosition(b.getPosition().x, b.getPosition().y);
+    //   // b.draw(window);
+    //   window.draw(dot);
+    // }
     {
-      dot.setPosition(b.getPosition().x, b.getPosition().y);
-      // b.draw(window);
-      window.draw(dot);
+      b.draw(window);
     }
     dot2.setPosition(hunter.getPosition().x, hunter.getPosition().y);
     window.draw(dot2);

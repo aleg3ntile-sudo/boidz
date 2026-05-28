@@ -28,16 +28,30 @@ struct Parameters {
   double p;    // parametro di preda
 };
 
+sf::ConvexShape createBoidShape(double size) {
+  sf::ConvexShape shape;
+  shape.setPointCount(3);
+
+  shape.setPoint(0, sf::Vector2f(size, 0.));
+  shape.setPoint(1, sf::Vector2f(-size * 0.6, -size * 0.5));
+  shape.setPoint(2, sf::Vector2f(-size * 0.6, size * 0.5));
+  shape.setFillColor(sf::Color(100, 200, 255));
+
+  shape.setOrigin(0., 0.);
+
+  return shape;
+}
+
 class SingleBoid {
   Coords position;
   Coords velocity;
   int cardinality;  // e che nessuno osi fiatare
-  sf::Sprite sprite;
+  sf::ConvexShape shape;
 
  public:
   SingleBoid() : position{}, velocity{}, cardinality(0) {}
   SingleBoid(Coords p, Coords v, int i)
-      : position(p), velocity(v), cardinality(i) {}
+      : position(p), velocity(v), cardinality(i), shape{createBoidShape(5.)} {}
   auto getCardinality() const { return cardinality; }
   auto getPosition() const { return position; }
   auto getVelocity() const { return velocity; }
@@ -45,6 +59,12 @@ class SingleBoid {
   void update_Position_in_time_for_single_boid(double time) {
     position.x = position.x + time * velocity.x;
     position.y = position.y + time * velocity.y;
+  }
+
+  void update_Shape() {
+    double angle = std::atan2(velocity.y, velocity.x) * 180 / M_PI;
+    shape.setPosition(sf::Vector2f(position.x, position.y));
+    shape.setRotation(angle);
   }
 
   void update_Velocity_with_rules_for_single_boid(Coords updated_velocity) {
@@ -76,27 +96,8 @@ class SingleBoid {
       velocity.y = velocity.y * speed_limit / speed;
     }
   }
-  // Coords update_Velocity_in_time_for_single_boid() {}
-  void setupSprite(sf::Texture &texture) {
-    sprite.setTexture(texture);
-    sf::FloatRect bounds = sprite.getLocalBounds();  // confini dell'immagine
-    sprite.setOrigin(
-        bounds.width / 2.f,
-        bounds.height /
-            2.f);  // origine dell'immagine del boid che poi manipoliamo
-    sprite.setScale(0.07f, 0.07f);  // quanto va scalata ( anche in base ai
-                                    // parametri e alla posizione dell'origin)
-  }  // per settare la texture
 
-  void aggiornaSprite() {
-    sprite.setPosition(
-        position.x,
-        position.y);  // sprite f aparte dei "transformable" di sfml,
-                      // quindi eredita questo e gli altri metodi
-                      // senza bisogno di includerli manualmente
-  }
-
-  void draw(sf::RenderWindow &window) const { window.draw(sprite); }
+  void draw(sf::RenderWindow &window) const { window.draw(shape); }
 };
 
 class Flock {
