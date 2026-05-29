@@ -1,9 +1,10 @@
-#include "stats.cpp"
+#include "stats.hpp"
 #include <cmath>
 
 using namespace boidz;
 
-void speed_stats(Flock const& stormo, double const &time, sf::RenderWindow &window2) {
+void speed_stats(Flock const &stormo, double const &time,
+                 sf::RenderWindow &window2) {
 
   float margine_x = 50.f;
   float margine_y = 50.f;
@@ -32,7 +33,6 @@ void speed_stats(Flock const& stormo, double const &time, sf::RenderWindow &wind
 
   while (window2.isOpen()) {
 
-
     sf::Event event;
     while (window2.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
@@ -41,9 +41,9 @@ void speed_stats(Flock const& stormo, double const &time, sf::RenderWindow &wind
       Coords mean_speed_for_cycle = mean_velocity(stormo);
       vector_of_mean_speeds.push_back(mean_speed_for_cycle);
 
-      for(auto &s : vector_of_mean_speeds){
-         double output_speed = std::sqrt(std::pow(s.x, 2) + std::pow(s.y, 2));
-         point.setPosition(time + 50.f, output_speed);
+      for (auto &s : vector_of_mean_speeds) {
+        double output_speed = std::sqrt(std::pow(s.x, 2) + std::pow(s.y, 2));
+        point.setPosition(time + 50.f, output_speed);
       }
       window2.clear();
 
