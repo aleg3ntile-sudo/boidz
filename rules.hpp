@@ -13,7 +13,7 @@ double get_distance(const SingleBoid &b1, const SingleBoid &b2) {
   return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
 }
 
-bool check_critical_distance(double const &d_s, const SingleBoid &b1,
+bool check_critical_distance(const double &d_s, const SingleBoid &b1,
                              const SingleBoid &b2) {
   Coords a = b1.getPosition();
   Coords b = b2.getPosition();
@@ -24,7 +24,8 @@ bool check_critical_distance(double const &d_s, const SingleBoid &b1,
   return false;
 }
 
-bool check_neighbours(double const &d, const SingleBoid &b1, SingleBoid &b2) {
+bool check_neighbours(const double &d, const SingleBoid &b1,
+                      const SingleBoid &b2) {
   Coords a = b1.getPosition();
   Coords b = b2.getPosition();
 
@@ -34,8 +35,8 @@ bool check_neighbours(double const &d, const SingleBoid &b1, SingleBoid &b2) {
   return false;
 }
 
-std::vector<SingleBoid> get_neighbours(double const &distance,
-                                       const SingleBoid &s, Flock const &f) {
+std::vector<SingleBoid> get_neighbours(const double &distance,
+                                       const SingleBoid &s, const Flock &f) {
   std::vector<SingleBoid> neighbours{};
   for (auto x : f.flock) {
     if (check_neighbours(distance, s, x) == true) {
@@ -127,17 +128,23 @@ Coords hunt(const SingleBoid &hunter, const Flock &stormo,
     com.y += b.getPosition().y;
   }
   int s = stormo.flock.size();
-  v_hunt = {par.h * ((com.x / s) - hunter.getPosition().x),
-            par.h * ((com.y / s) - hunter.getPosition().y)};
+  if (stormo.flock.size() >= 0) {
+    v_hunt = {par.h * ((com.x / s) - hunter.getPosition().x),
+              par.h * ((com.y / s) - hunter.getPosition().y)};
+  } else {
+    v_hunt = {0., 0.};
+  }
   return v_hunt;
 }
 
-Coords hunter_repulsion(const SingleBoid &hunter, SingleBoid prey,
+Coords hunter_repulsion(const SingleBoid &hunter, const SingleBoid &prey,
                         const Parameters &par) {
   Coords v_prey;
   if (check_critical_distance(par.d, prey, hunter)) {
     v_prey = {-(par.p * (hunter.getPosition().x - prey.getPosition().x)),
               -(par.p * (hunter.getPosition().y - prey.getPosition().y))};
+  } else {
+    v_prey = {0., 0.};
   }
   return v_prey;
 }
@@ -152,5 +159,5 @@ Coords create_velocity_with_rules_for_single_boid(const Parameters &par,
          hunter_repulsion(hunter, b, par);
 }
 
-}  // namespace boidz
+} // namespace boidz
 #endif
