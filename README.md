@@ -8,7 +8,7 @@ Per creare cartella build:
 cmake -S . -B build -G"Ninja Multi-Config" 
 
 Compila in debug:
-cmake --build build --config Debug
+...cmake --build build --config Debug...
 
 Compila i test in debug:
 cmake --build build --config Debug --target test
