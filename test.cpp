@@ -1,284 +1,391 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #include "rules.hpp"
+#include "stats.hpp"
 using namespace boidz;
 
 // operator +
-TEST_CASE("check + operator on Coords") {
-  Coords a{1., -9.};
-  Coords b{8., 2.3};
+TEST_CASE("check + operator on Coords")
+{
+  Coords a{1.f, -9.f};
+  Coords b{8.f, 2.3f};
   Coords result = a + b;
-  CHECK(result.x == doctest::Approx(9.00));
-  CHECK(result.y == doctest::Approx(-6.7));
+  CHECK(result.x == doctest::Approx(9.00f));
+  CHECK(result.y == doctest::Approx(-6.7f));
 }
 
 // get_distance
-TEST_CASE("check get_distance function") {
-  SingleBoid b1{{1.0, 2.0}, {0.5, 0.5}, 3};
-  SingleBoid b2{{3.0, 1.5}, {1.0, 0.2}, 12};
-  CHECK(get_distance(b1, b2) == doctest::Approx(2.06).epsilon(0.01));
+TEST_CASE("check get_distance function")
+{
+  SingleBoid b1{{1.0f, 2.0f}, {0.5f, 0.5f}, 3};
+  SingleBoid b2{{3.0f, 1.5f}, {1.0f, 0.2f}, 12};
+  CHECK(get_distance(b1, b2) == doctest::Approx(2.06f).epsilon(0.01f));
 }
 
-TEST_CASE("check get_distance function") {
-  SingleBoid b1{{1.0, 2.3}, {3.1, 2.0}, 1};
+TEST_CASE("check get_distance function")
+{
+  SingleBoid b1{{1.0f, 2.3f}, {3.1f, 2.0f}, 1};
   SingleBoid b2;
-  CHECK(get_distance(b1, b2) == doctest::Approx(2.51).epsilon(0.01));
+  CHECK(get_distance(b1, b2) == doctest::Approx(2.51f).epsilon(0.01f));
 }
 
-TEST_CASE("check get_distance function - one boid") {
-  SingleBoid b1{{0.0, 1.0}, {4.3, 2.0}, 1};
-  CHECK(get_distance(b1, b1) == 0);
+TEST_CASE("check get_distance function - one boid")
+{
+  SingleBoid b1{{0.0f, 1.0f}, {4.3f, 2.0f}, 1};
+  CHECK(get_distance(b1, b1) == 0.f);
 }
 
 // check_critical_distance
-TEST_CASE("check check_critical_distance function") {
-  SingleBoid b1{{0.0, 0.0}, {0.0, 0.0}, 1};
-  SingleBoid b2{{2.0, 0.0}, {0.0, 0.0}, 1};
-  CHECK(check_critical_distance(2.0, b1, b2) == true);
-  CHECK(check_critical_distance(1.0, b1, b2) == false);
+TEST_CASE("check check_critical_distance function")
+{
+  SingleBoid b1{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
+  SingleBoid b2{{2.0f, 0.0f}, {0.0f, 0.0f}, 1};
+  CHECK(check_critical_distance(2.0f, b1, b2) == true);
+  CHECK(check_critical_distance(1.0f, b1, b2) == false);
 }
 
 // check_neighbours
-TEST_CASE("check check_neighbours function") {
-  SingleBoid b1{{0.0, 0.0}, {0.0, 0.0}, 1};
-  SingleBoid b2{{3.0, 4.0}, {0.0, 0.0}, 1};
-  CHECK(check_neighbours(5.0, b1, b2) == true);
-  CHECK(check_neighbours(4.9, b1, b2) == false);
+TEST_CASE("check check_neighbours function")
+{
+  SingleBoid b1{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
+  SingleBoid b2{{3.0f, 4.0f}, {0.0f, 0.0f}, 1};
+  CHECK(check_neighbours(5.0f, b1, b2) == true);
+  CHECK(check_neighbours(4.9f, b1, b2) == false);
 }
 
 // get_neighbours
-TEST_CASE("check get_neighbours function - no neighbours") {
+TEST_CASE("check get_neighbours function - no neighbours")
+{
   Flock f;
-  SingleBoid b1{{0.0, 0.0}, {0.0, 0.0}, 1};
-  SingleBoid b2{{10.0, 0.0}, {0.0, 0.0}, 2};
-  SingleBoid b3{{20.0, 0.0}, {0.0, 0.0}, 3};
+  SingleBoid b1{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
+  SingleBoid b2{{10.0f, 0.0f}, {0.0f, 0.0f}, 2};
+  SingleBoid b3{{20.0f, 0.0f}, {0.0f, 0.0f}, 3};
   f.flock.push_back(b1);
   f.flock.push_back(b2);
   f.flock.push_back(b3);
 
-  auto result = get_neighbours(2.0, b1, f);
+  auto result = get_neighbours(2.0f, b1, f);
   CHECK(result.size() == 0);
 }
 
-TEST_CASE("check get_neighbours function - some neighbours") {
+TEST_CASE("check get_neighbours function - some neighbours")
+{
   Flock f;
-  SingleBoid b1{{0.0, 0.0}, {0.0, 0.0}, 1};
-  SingleBoid b2{{1.0, 0.0}, {0.0, 0.0}, 2};
-  SingleBoid b3{{10.0, 0.0}, {0.0, 0.0}, 3};
+  SingleBoid b1{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
+  SingleBoid b2{{1.0f, 0.0f}, {0.0f, 0.0f}, 2};
+  SingleBoid b3{{10.0f, 0.0f}, {0.0f, 0.0f}, 3};
   f.flock.push_back(b1);
   f.flock.push_back(b2);
   f.flock.push_back(b3);
 
-  auto result = get_neighbours(2.0, b1, f);
+  auto result = get_neighbours(2.0f, b1, f);
   CHECK(result.size() == 1);
 }
 
-TEST_CASE("check get_neighbours function - all are neighbours") {
+TEST_CASE("check get_neighbours function - all are neighbours")
+{
   Flock f;
-  SingleBoid b1{{0.0, 0.0}, {0.5, 0.0}, 1};
-  SingleBoid b2{{0.0, 1.0}, {0.0, 0.5}, 2};
-  SingleBoid b3{{1.0, 0.0}, {0.0, 1.0}, 3};
+  SingleBoid b1{{0.0f, 0.0f}, {0.5f, 0.0f}, 1};
+  SingleBoid b2{{0.0f, 1.0f}, {0.0f, 0.5f}, 2};
+  SingleBoid b3{{1.0f, 0.0f}, {0.0f, 1.0f}, 3};
 
   f.flock.push_back(b1);
   f.flock.push_back(b2);
   f.flock.push_back(b3);
 
-  auto result = get_neighbours(2.0, b1, f);
+  auto result = get_neighbours(2.0f, b1, f);
   CHECK(result.size() == 2);
 }
 
 // separation
-TEST_CASE("check separation_for_singleboid function") {
-  Parameters par{5.0, 5.0, 1.0, 0.0, 0.0, 0.0, 0.0};
+TEST_CASE("check separation_for_singleboid function")
+{
+  Parameters par{5.0f, 5.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{0.0, 0.0}, {0.0, 0.0}, 1};
-  SingleBoid b{{1.0, 0.0}, {0.0, 0.0}, 2};
+  SingleBoid a{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
+  SingleBoid b{{1.0f, 0.0f}, {0.0f, 0.0f}, 2};
   f.flock.push_back(a);
   f.flock.push_back(b);
 
   Coords result = separation(par, f, a);
 
-  CHECK(result.x == doctest::Approx(-1.0));
-  CHECK(result.y == doctest::Approx(0.0));
+  CHECK(result.x == doctest::Approx(-1.0f));
+  CHECK(result.y == doctest::Approx(0.0f));
 }
 
 TEST_CASE(
-    "check separation_for_singleboid function - one boid is too distant") {
-  Parameters par{5.0, 5.0, 1.0, 0.0, 0.0, 0.0, 0.0};
+    "check separation_for_singleboid function - one boid is too distant")
+{
+  Parameters par{5.0f, 5.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{0.0, 0.0}, {0.0, 0.0}, 1};
-  SingleBoid b{{1.0, 0.0}, {0.0, 0.0}, 2};
-  SingleBoid c{{40.0, 0.0}, {0.0, 0.0}, 3};
+  SingleBoid a{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
+  SingleBoid b{{1.0f, 0.0f}, {0.0f, 0.0f}, 2};
+  SingleBoid c{{40.0f, 0.0f}, {0.0f, 0.0f}, 3};
   f.flock.push_back(a);
   f.flock.push_back(b);
   f.flock.push_back(c);
 
   Coords result = separation(par, f, a);
 
-  CHECK(result.x == doctest::Approx(-1.0));
-  CHECK(result.y == doctest::Approx(0.0));
+  CHECK(result.x == doctest::Approx(-1.0f));
+  CHECK(result.y == doctest::Approx(0.0f));
 }
 
 // alignment
-TEST_CASE("check alignment function") {
-  Parameters par{5.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0};
+TEST_CASE("check alignment function")
+{
+  Parameters par{5.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{1.0, 0.0}, {1.0, 0.0}, 1};
-  SingleBoid b{{0.0, 1.0}, {2.0, 1.0}, 2};
+  SingleBoid a{{1.0f, 0.0f}, {1.0f, 0.0f}, 1};
+  SingleBoid b{{0.0f, 1.0f}, {2.0f, 1.0f}, 2};
   f.flock.push_back(a);
   f.flock.push_back(b);
   Coords result = alignment(par, f, a);
 
-  CHECK(result.x == doctest::Approx(1.0));
-  CHECK(result.y == doctest::Approx(1.0));
+  CHECK(result.x == doctest::Approx(1.0f));
+  CHECK(result.y == doctest::Approx(1.0f));
 }
 
-TEST_CASE("check alignment function") {
-  Parameters par{0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0};
+TEST_CASE("check alignment function")
+{
+  Parameters par{0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{1.5, 0.5}, {1.0, -1.0}, 1};
+  SingleBoid a{{1.5f, 0.5f}, {1.0f, -1.0f}, 1};
   f.flock.push_back(a);
   Coords result = alignment(par, f, a);
 
-  CHECK(result.x == doctest::Approx(0.0));
-  CHECK(result.y == doctest::Approx(0.0));
+  CHECK(result.x == doctest::Approx(0.0f));
+  CHECK(result.y == doctest::Approx(0.0f));
 }
 
-TEST_CASE("check alignment function") {
-  Parameters par{0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0};
+TEST_CASE("check alignment function")
+{
+  Parameters par{0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{1.5, 0.5}, {1.0, -1.0}, 1};
+  SingleBoid a{{1.5f, 0.5f}, {1.0f, -1.0f}, 1};
   Coords result = alignment(par, f, a);
 
-  CHECK(result.x == doctest::Approx(0.0));
-  CHECK(result.y == doctest::Approx(0.0));
+  CHECK(result.x == doctest::Approx(0.0f));
+  CHECK(result.y == doctest::Approx(0.0f));
 }
 
-TEST_CASE("check alignment function") {
-  Parameters par{0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0};
+TEST_CASE("check alignment function")
+{
+  Parameters par{0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{1.5, 0.5}, {1.0, -1.0}, 1};
-  SingleBoid b{{-1.0, 0.0}, {2.0, 3.0}, 2};
+  SingleBoid a{{1.5f, 0.5f}, {1.0f, -1.0f}, 1};
+  SingleBoid b{{-1.0f, 0.0f}, {2.0f, 3.0f}, 2};
   f.flock.push_back(a);
   Coords result = alignment(par, f, b);
 
-  CHECK(result.x == doctest::Approx(0.0));
-  CHECK(result.y == doctest::Approx(0.0));
+  CHECK(result.x == doctest::Approx(0.0f));
+  CHECK(result.y == doctest::Approx(0.0f));
 }
 
 // cohesion
-TEST_CASE("check cohesion function") {
-  Parameters par{5.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+TEST_CASE("check cohesion function")
+{
+  Parameters par{5.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{1.0, -2.0}, {0.0, 1.0}, 1};
-  SingleBoid b{{-1.0, 2.5}, {1.0, 1.0}, 2};
+  SingleBoid a{{1.0f, -2.0f}, {0.0f, 1.0f}, 1};
+  SingleBoid b{{-1.0f, 2.5f}, {1.0f, 1.0f}, 2};
   f.flock.push_back(a);
   f.flock.push_back(b);
   Coords result = cohesion(par, f, a);
 
-  CHECK(result.x == doctest::Approx(-2.0));
-  CHECK(result.y == doctest::Approx(4.5));
+  CHECK(result.x == doctest::Approx(-2.0f));
+  CHECK(result.y == doctest::Approx(4.5f));
 }
 
-TEST_CASE("check cohesion function") {
-  Parameters par{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+TEST_CASE("check cohesion function")
+{
+  Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0};
   Flock f;
-  SingleBoid a{{1.0, -2.0}, {0.0, 1.0}, 1};
+  SingleBoid a{{1.0f, -2.0f}, {0.0f, 1.0f}, 1};
   f.flock.push_back(a);
   Coords result = cohesion(par, f, a);
 
-  CHECK(result.x == doctest::Approx(0.0));
-  CHECK(result.y == doctest::Approx(0.0));
+  CHECK(result.x == doctest::Approx(0.0f));
+  CHECK(result.y == doctest::Approx(0.0f));
 }
 
-TEST_CASE("check cohesion function - one boid is too distant") {
-  Parameters par{5.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+TEST_CASE("check cohesion function - one boid is too distant")
+{
+  Parameters par{5.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
   Flock f;
-  SingleBoid a{{1.0, -2.0}, {0.0, 1.0}, 1};
-  SingleBoid b{{-1.0, 2.5}, {1.0, 1.0}, 2};
-  SingleBoid c{{67.0, 1.0}, {1.0, 1.0}, 3};
+  SingleBoid a{{1.0f, -2.0f}, {0.0f, 1.0f}, 1};
+  SingleBoid b{{-1.0f, 2.5f}, {1.0f, 1.0f}, 2};
+  SingleBoid c{{67.0f, 1.0f}, {1.0f, 1.0f}, 3};
   f.flock.push_back(a);
   f.flock.push_back(b);
   f.flock.push_back(c);
   Coords result = cohesion(par, f, a);
 
-  CHECK(result.x == doctest::Approx(-2.0));
-  CHECK(result.y == doctest::Approx(4.5));
+  CHECK(result.x == doctest::Approx(-2.0f));
+  CHECK(result.y == doctest::Approx(4.5f));
 }
 
 // hunt
-TEST_CASE("check hunt function - no boids") {
-  SingleBoid h{{0., 0.}, {0., 0.}, 1};
-  Parameters par{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0};
+TEST_CASE("check hunt function - no boids")
+{
+  SingleBoid h{{0.f, 0.f}, {0.f, 0.f}, 1};
+  Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f};
   Flock f;
   Coords result = hunt_the_flock(h, f, par);
-  CHECK(result.x == (0.));
-  CHECK(result.y == (0.));
+  CHECK(result.x == (0.f));
+  CHECK(result.y == (0.f));
 }
 
-TEST_CASE("check hunt function - three boids") {
-  Parameters par{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0};
-  SingleBoid h{{7.0, 1.0}, {8.0, 5.0}, 11};
+TEST_CASE("check hunt function - three boids")
+{
+  Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f};
+  SingleBoid h{{7.0f, 1.0f}, {8.0f, 5.0f}, 11};
   Flock f;
-  SingleBoid a{{6., 7}, {0., 1.}, 1};
-  SingleBoid b{{1., 1.}, {1.5, 0.5}, 2};
-  SingleBoid c{{0., 1.}, {1.3, 0.8}, 3};
+  SingleBoid a{{6.f, 7.f}, {0.f, 1.f}, 1};
+  SingleBoid b{{1.f, 1.f}, {1.5f, 0.5f}, 2};
+  SingleBoid c{{0.f, 1.f}, {1.3f, 0.8f}, 3};
   f.flock.push_back(a);
   f.flock.push_back(b);
   f.flock.push_back(c);
   Coords result = hunt_the_flock(h, f, par);
-  CHECK(result.x == doctest::Approx(-4.666666));
-  CHECK(result.y == doctest::Approx(2.0));
+  CHECK(result.x == doctest::Approx(-4.666666f));
+  CHECK(result.y == doctest::Approx(2.0f));
 }
 
-TEST_CASE("check hunt function - simmetrical configuration") {
-  Parameters par{0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 1.0};
-  SingleBoid h{{0.0, 0.0}, {8.0, 5.0}, 11};
+TEST_CASE("check hunt function - simmetrical configuration")
+{
+  Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 13.0f, 1.0f};
+  SingleBoid h{{0.0f, 0.0f}, {8.0f, 5.0f}, 11};
   Flock f;
-  SingleBoid a{{-4., 0.}, {0., 1.}, 1};
-  SingleBoid b{{4., 0.}, {2.5, 1.2}, 2};
-  SingleBoid c{{0., -4.}, {1.3, 0.8}, 3};
-  SingleBoid d{{0., 4.}, {-3.9, 1.1}, 4};
+  SingleBoid a{{-4.f, 0.f}, {0.f, 1.f}, 1};
+  SingleBoid b{{4.f, 0.f}, {2.5f, 1.2f}, 2};
+  SingleBoid c{{0.f, -4.f}, {1.3f, 0.8f}, 3};
+  SingleBoid d{{0.f, 4.f}, {-3.9f, 1.1f}, 4};
   f.flock.push_back(a);
   f.flock.push_back(b);
   f.flock.push_back(c);
   f.flock.push_back(d);
   Coords result = hunt_the_flock(h, f, par);
-  CHECK(result.x == 0.);
-  CHECK(result.y == 0.);
+  CHECK(result.x == 0.f);
+  CHECK(result.y == 0.f);
 }
 
 // hunter_repulsion
-TEST_CASE("check hunter_repulsion function - no hunter in sight") {
-  Parameters par{0.0, 0.0, 0.0, 0.0, 0.0, 13.0, 3.0};
-  SingleBoid h{{30., 40.}, {0.0, 5.0}, 11};
+TEST_CASE("check hunter_repulsion function - no hunter in sight")
+{
+  Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 13.0f, 3.0f};
+  SingleBoid h{{30.f, 40.f}, {0.0f, 5.0f}, 11};
   Flock f;
   SingleBoid a{{2., 1.}, {0., 1.}, 1};
   f.flock.push_back(a);
   Coords result = hunter_repulsion(h, a, par);
-  CHECK(result.x == 0.);
-  CHECK(result.y == 0.);
+  CHECK(result.x == 0.f);
+  CHECK(result.y == 0.f);
 }
 
-TEST_CASE("check hunter_repulsion function - hunter in sight") {
-  Parameters par{15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
-  SingleBoid h{{10.0, 10.0}, {0.5, 1.0}, 1};
-  SingleBoid prey{{5.5, 1.0}, {-4.0, 2.0}, 11};
+TEST_CASE("check hunter_repulsion function - hunter in sight")
+{
+  Parameters par{15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+  SingleBoid h{{10.0f, 10.0f}, {0.5f, 1.0f}, 1};
+  SingleBoid prey{{5.5f, 1.0f}, {-4.0f, 2.0f}, 11};
   Coords result = hunter_repulsion(h, prey, par);
-  CHECK(result.x == -4.5);
-  CHECK(result.y == -9.0);
+  CHECK(result.x == -4.5f);
+  CHECK(result.y == -9.0f);
 }
 
 // create_velocity_with_rules
-TEST_CASE("check create_velocity_with_rules function") {
-  Parameters par{5.0, 1.0, 10.0, 1.0, 3.0, 0.0, 0.0};
-  SingleBoid a{{-3.0, -2.0}, {5.0, 2.0}, 1};
-  SingleBoid b{{1.0, 1.0}, {10.0, 1.0}, 2};
+TEST_CASE("check create_velocity_with_rules function")
+{
+  Parameters par{5.0f, 1.0f, 10.0f, 1.0f, 3.0f, 0.0f, 0.0f};
+  SingleBoid a{{-3.0f, -2.0f}, {5.0f, 2.0f}, 1};
+  SingleBoid b{{1.0f, 1.0f}, {10.0f, 1.0f}, 2};
   Flock f;
   f.flock.push_back(a);
   f.flock.push_back(b);
-  SingleBoid hunter{{500., 500.0}, {0.0, 0.0}, 11};
+  SingleBoid hunter{{500.f, 500.0f}, {0.0f, 0.0f}, 11};
   Coords result = create_velocity_with_rules(par, f, b, hunter);
-  CHECK(result.x == doctest::Approx(-7.));
-  CHECK(result.y == doctest::Approx(-7.));
+  CHECK(result.x == doctest::Approx(-7.f));
+  CHECK(result.y == doctest::Approx(-7.f));
+}
+
+TEST_CASE("mean_velocity: empty flock returns (0,0)")
+{
+  Flock f{};
+  Coords result = mean_velocity(f);
+  CHECK(result.x == doctest::Approx(0.f));
+  CHECK(result.y == doctest::Approx(0.f));
+}
+
+TEST_CASE("mean_velocity: two boids")
+{
+  Flock f{};
+  f.flock.push_back(SingleBoid{{0.f, 0.f}, {3.f, 4.f}, 0});
+  f.flock.push_back(SingleBoid{{0.f, 0.f}, {1.f, 2.f}, 1});
+
+  Coords result = mean_velocity(f);
+  CHECK(result.x == doctest::Approx(2.f));
+  CHECK(result.y == doctest::Approx(3.f));
+}
+
+TEST_CASE("get_vector_of_distances: empty flock returns empty vector")
+{
+  Flock f{};
+  auto result = get_vector_of_distances(f);
+  CHECK(result.empty());
+}
+
+TEST_CASE("get_vector_of_distances: two boids return two distances")
+{
+  Flock f{};
+  f.flock.push_back(SingleBoid{{0.f, 0.f}, {0.f, 0.f}, 0});
+  f.flock.push_back(SingleBoid{{3.f, 4.f}, {0.f, 0.f}, 1});
+
+  auto result = get_vector_of_distances(f);
+  CHECK(result.size() == 2);
+  CHECK(result[0] == doctest::Approx(5.f));
+  CHECK(result[1] == doctest::Approx(5.f));
+}
+
+TEST_CASE("mean_distance: empty flock returns 0")
+{
+  Flock f{};
+  CHECK(mean_distance(f) == doctest::Approx(0.f));
+}
+
+TEST_CASE("mean_distance: two boids with known distance")
+{
+  Flock f{};
+  f.flock.push_back(SingleBoid{{0.f, 0.f}, {0.f, 0.f}, 0});
+  f.flock.push_back(SingleBoid{{3.f, 4.f}, {0.f, 0.f}, 1});
+
+  CHECK(mean_distance(f) == doctest::Approx(5.f));
+}
+
+TEST_CASE("standard_deviation<float>: empty flock returns 0")
+{
+  std::vector<float> v{};
+  CHECK(standard_deviation(v) == doctest::Approx(0.f));
+}
+
+TEST_CASE("standard_deviation<float>: known values")
+{
+  std::vector<float> v{1.f, 2.f, 3.f, 4.f, 5.f};
+  CHECK(standard_deviation(v) == doctest::Approx(std::sqrt(2.f)));
+}
+
+TEST_CASE("standard_deviation<SingleBoid>: empty flock returns 0")
+{
+  std::vector<SingleBoid> v{};
+  CHECK(standard_deviation(v) == doctest::Approx(0.f));
+}
+
+TEST_CASE(
+    "standard_deviation<SingleBoid>: boids with equal speed give std dev = 0")
+{
+  std::vector<SingleBoid> v{};
+  v.push_back(SingleBoid{{0.f, 0.f}, {2.f, 2.f}, 0});
+  v.push_back(SingleBoid{{0.f, 0.f}, {2.f, 2.f}, 1});
+  v.push_back(SingleBoid{{0.f, 0.f}, {2.f, 2.f}, 2});
+
+  CHECK(standard_deviation(v) == doctest::Approx(0.f));
 }
