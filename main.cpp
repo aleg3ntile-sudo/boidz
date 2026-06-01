@@ -10,11 +10,11 @@ int main()
   Parameters params{};
   try
   {
-    params.d = read_parameter("Neighbours distance ", 20., 100.);
-    params.d_s = read_parameter("Critical distance ", 5., 25.);
-    params.s = read_parameter("Separation parameter ", 0.5, 5.);
-    params.a = read_parameter("Alignment parameter ", 0.05, 1.);
-    params.c = read_parameter("Cohesion parameter ", 0.01, 0.05);
+    params.d = read_parameter("Neighbours distance ", 20.f, 100.f);
+    params.d_s = read_parameter("Critical distance ", 5.f, 25.f);
+    params.s = read_parameter("Separation parameter ", 0.5f, 5.f);
+    params.a = read_parameter("Alignment parameter ", 0.05f, 1.f);
+    params.c = read_parameter("Cohesion parameter ", 0.01f, 0.05f);
     flock_size = read_parameter("Flock size ", 1, 100);
     params.h = 1.;
     params.p = 0.5;
@@ -163,8 +163,8 @@ int main()
         vector_of_mean_speeds.erase(
             vector_of_mean_speeds.begin(),
             vector_of_mean_speeds.begin() +
-                (vector_of_mean_speeds.size() -
-                 max_points));
+                (static_cast<float>(vector_of_mean_speeds.size()) - static_cast<float>(
+                 max_points)));
       }
       float standard_deviation_velocity = standard_deviation(stormo.flock);
       vector_of_standard_deviations_v.push_back(standard_deviation_velocity);
@@ -179,23 +179,23 @@ int main()
         vector_of_mean_distances.erase(
             vector_of_mean_distances.begin(),
             vector_of_mean_distances.begin() +
-                (vector_of_mean_distances.size() -
-                 max_points)); // toglie i punti extra dal grafico
+                (static_cast<float>(vector_of_mean_distances.size()) - static_cast<float>(
+                 max_points))); // toglie i punti extra dal grafico
       }
       if (vector_of_standard_deviations_v.size() > max_points)
       {
         vector_of_standard_deviations_v.erase(
             vector_of_standard_deviations_v.begin(),
             vector_of_standard_deviations_v.begin() +
-                (vector_of_standard_deviations_v.size() -
-                 max_points)); // toglie i punti extra dal grafico
+                (static_cast<float>(vector_of_standard_deviations_v.size()) - static_cast<float>(
+                 max_points))); // toglie i punti extra dal grafico
       }
       if (vector_of_standard_deviations_d.size() > max_points){
         vector_of_standard_deviations_d.erase(
             vector_of_standard_deviations_d.begin(),
             vector_of_standard_deviations_d.begin() +
-                (vector_of_standard_deviations_d.size() -
-                 max_points)); // toglie i punti extra dal grafico
+                (static_cast<float>(vector_of_standard_deviations_d.size()) - static_cast<float>(
+                 max_points))); // toglie i punti extra dal grafico
       }
 
       window.clear(sf::Color(15, 17, 26));
@@ -212,33 +212,33 @@ int main()
       window2.clear();
       window2.draw(axis);
 
-      int visible_count = vector_of_mean_speeds.size();
+      auto visible_count = vector_of_mean_speeds.size();
       float graph_left = 50.0;
       float graph_right = 450.0;
       float graph_width = graph_right - graph_left;
       float x_step;
       if (visible_count > 1)
       {
-        x_step = graph_width / (visible_count - 1);
+        x_step = graph_width / static_cast<float>((visible_count - 1));
       }
       else
       {
         x_step = 0.0;
       }
 
-      for (int i{0}; i < visible_count; ++i)
+      for (long unsigned int i{0}; i < visible_count; ++i)
       {
         float output_speed = std::sqrt(vector_of_mean_speeds[i].x * vector_of_mean_speeds[i].x + 
           vector_of_mean_speeds[i].y * vector_of_mean_speeds[i].y);
-        float x = graph_left + x_step * i;
-        float y = 550.0 - output_speed;
-        if (y < 50.0)
+        float x = graph_left + static_cast<float>(x_step * i);
+        float y = 550.0f - output_speed;
+        if (y < 50.0f)
         {
-          y = 50.0;
+          y = 50.0f;
         }
-        if (y > 550.0)
+        if (y > 550.0f)
         {
-          y = 550.0;
+          y = 550.0f;
         }
         label.setString("Mean speed = " + std::to_string(output_speed) + '\n' +
                         "Error = " + std::to_string(vector_of_standard_deviations_v[i]));
@@ -255,15 +255,15 @@ int main()
       window3.clear();
       window3.draw(axis);
 
-      int visible_count2 = vector_of_mean_distances.size();
-      int i{0};
+      auto visible_count2 = vector_of_mean_distances.size();
+      long unsigned int i{0};
       float graph_left = 50.0;
       float graph_right = 450.0;
       float graph_width = graph_right - graph_left;
       float x_step;
       if (visible_count2 > 1)
       {
-        x_step = graph_width / (visible_count2 - 1);
+        x_step = graph_width / static_cast<float>((visible_count2 - 1));
       }
       else
       {
@@ -273,15 +273,15 @@ int main()
                 last = vector_of_mean_distances.end();
            first != last && i < visible_count2; ++first, ++i)
       {
-        float x = graph_left + x_step * i;
-        float y = 550.0 - *first;
-        if (y < 50.0)
+        float x = graph_left + static_cast<float>(x_step * i);
+        float y = 550.0f - *first;
+        if (y < 50.0f)
         {
-          y = 50.0;
+          y = 50.0f;
         }
-        if (y > 550.0)
+        if (y > 550.0f)
         {
-          y = 550.0;
+          y = 550.0f;
         }
         label2.setString("Mean distance =" + std::to_string(*first) + '\n' +
                          "Error = " + std::to_string(vector_of_standard_deviations_d[i]));

@@ -12,7 +12,7 @@ float get_distance(const SingleBoid &b1, const SingleBoid &b2) {
   assert(std::isfinite(a.x) && std::isfinite(a.y));
   assert(std::isfinite(b.x) && std::isfinite(b.y));
 
-  float distance = std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
+  float distance = static_cast<float>(std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2)));
 
   assert(distance >= 0.);
   return distance;
@@ -79,16 +79,16 @@ Coords alignment(const Parameters &par, const Flock &stormo,
   Coords v_alignment;
   Coords v_sum{0., 0.};
   auto neighbours = get_neighbours(par.d, s, stormo);
-  int n = neighbours.size();
-  assert(n >= 0);
+  auto n = neighbours.size();
+
 
   for (auto b : neighbours) {
     v_sum.x += b.getVelocity().x;
     v_sum.y += b.getVelocity().y;
   }
   if (neighbours.size() >= 1) {
-    v_alignment = Coords{par.a * ((v_sum.x / n) - s.getVelocity().x),
-                         par.a * ((v_sum.y / n) - s.getVelocity().y)};
+    v_alignment = Coords{par.a * ((v_sum.x / static_cast<float>(n)) - s.getVelocity().x),
+                         par.a * ((v_sum.y / static_cast<float>(n)) - s.getVelocity().y)};
     assert(par.a >= 0.);
     assert(std::isfinite(v_alignment.x) && std::isfinite(v_alignment.y));
     return v_alignment;
@@ -103,10 +103,10 @@ Coords cohesion(const Parameters &par, const Flock &stormo,
   Coords com{0., 0.};
   Coords v_cohesion;
   auto neighbours = get_neighbours(par.d, s, stormo);
-  int n = neighbours.size();
+  auto n = neighbours.size();
   for (auto b : neighbours) {
-    com.x += b.getPosition().x / n;
-    com.y += b.getPosition().y / n;
+    com.x += b.getPosition().x / static_cast<float>(n);
+    com.y += b.getPosition().y / static_cast<float>(n);
   }
 
   if (neighbours.size() >= 1) {
@@ -126,10 +126,10 @@ Coords hunt_the_flock(const SingleBoid &hunter, const Flock &stormo,
   Coords com{0., 0.};
   Coords v_hunt;
   for (auto b : stormo.flock) {
-    int s = stormo.flock.size();
-    assert(s >= 0);
-    com.x += b.getPosition().x / s;
-    com.y += b.getPosition().y / s;
+    auto s = stormo.flock.size();
+    
+    com.x += b.getPosition().x / static_cast<float>(s);
+    com.y += b.getPosition().y / static_cast<float>(s);
   }
   if (stormo.flock.size() > 0) {
     v_hunt = Coords{par.h * (com.x - hunter.getPosition().x),

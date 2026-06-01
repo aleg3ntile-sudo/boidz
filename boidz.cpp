@@ -11,8 +11,8 @@ sf::ConvexShape createBoidShape(float size) {
   shape.setPointCount(3);
 
   shape.setPoint(0, sf::Vector2f(size, 0.));
-  shape.setPoint(1, sf::Vector2f(-size * 0.6, -size * 0.5));
-  shape.setPoint(2, sf::Vector2f(-size * 0.6, size * 0.5));
+  shape.setPoint(1, sf::Vector2f(-size * 0.6f, -size * 0.5f));
+  shape.setPoint(2, sf::Vector2f(-size * 0.6f, size * 0.5f));
   shape.setFillColor(sf::Color(100, 200, 255));
 
   shape.setOrigin(0., 0.);
@@ -38,7 +38,7 @@ void SingleBoid::update_Position_in_time(float time) {
 }
 
 void SingleBoid::update_Shape() {
-  float angle = std::atan2(velocity.y, velocity.x) * 180 / M_PI;
+  float angle = static_cast<float>(std::atan2(velocity.y, velocity.x) * 180 / M_PI);
   shape.setPosition(sf::Vector2f(position.x, position.y));
   shape.setRotation(angle);
 }

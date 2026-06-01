@@ -46,7 +46,7 @@ class Flock {
 public:
   std::vector<SingleBoid> flock{};
   Flock() : flock{} {}
-  Flock(int N) : flock(N) {}
+  Flock(long unsigned int N) : flock(N) {}
 };
 
 } // namespace boidz

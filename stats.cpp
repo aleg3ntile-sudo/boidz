@@ -15,8 +15,8 @@ namespace boidz
         mean_velocity.x += std::abs(b.getVelocity().x);
         mean_velocity.y += std::abs(b.getVelocity().y);
       }
-      mean_velocity.x = (mean_velocity.x / f.flock.size());
-      mean_velocity.y = (mean_velocity.y / f.flock.size());
+      mean_velocity.x = (mean_velocity.x / static_cast<float>(f.flock.size()));
+      mean_velocity.y = (mean_velocity.y / static_cast<float>(f.flock.size()));
       return mean_velocity;
     }
     else
@@ -50,7 +50,7 @@ namespace boidz
     {
       auto vector_of_distances = get_vector_of_distances(f);
       mean_distance = (std::accumulate(vector_of_distances.begin(), vector_of_distances.end(), 0.f) /
-                       vector_of_distances.size());
+                       static_cast<float>(vector_of_distances.size()));
       return mean_distance;
     }
     else
@@ -69,8 +69,8 @@ namespace boidz
         centre_of_mass.x += b.getVelocity().x;
         centre_of_mass.y += b.getVelocity().y;
       }
-      centre_of_mass.x = (centre_of_mass.x / f.flock.size());
-      centre_of_mass.y = (centre_of_mass.y / f.flock.size());
+      centre_of_mass.x = (centre_of_mass.x / static_cast<float>(f.flock.size()));
+      centre_of_mass.y = (centre_of_mass.y / static_cast<float>(f.flock.size()));
       return centre_of_mass;
     }
     else
@@ -84,13 +84,13 @@ namespace boidz
     float standard_deviation{0.f};
     if (v.size() != 0)
     {
-      float mean = std::accumulate(v.begin(), v.end(), 0.f) / v.size();
+      float mean = std::accumulate(v.begin(), v.end(), 0.f) / static_cast<float>(v.size());
       float sum_of_squared_deviations = 0.f;
       for (auto &x : v)
       {
-        sum_of_squared_deviations += std::pow(x - mean, 2);
+        sum_of_squared_deviations += static_cast<float>(std::pow(x - mean, 2));
       }
-      standard_deviation = std::sqrt(sum_of_squared_deviations / v.size());
+      standard_deviation = std::sqrt(sum_of_squared_deviations / static_cast<float>(v.size()));
       return standard_deviation;
     }
     else
@@ -109,15 +109,15 @@ namespace boidz
         mean.x += b.getVelocity().x;
         mean.y += b.getVelocity().y;
       }
-      mean.x = mean.x / v.size();
-      mean.y = mean.y / v.size();
+      mean.x = mean.x / static_cast<float>(v.size());
+      mean.y = mean.y / static_cast<float>(v.size());
 
       float sum_of_squared_deviations = 0.f;
       for (auto &b : v)
       {
-        sum_of_squared_deviations += std::pow(b.getVelocity().x - mean.x, 2) + std::pow(b.getVelocity().y - mean.y, 2);
+        sum_of_squared_deviations += static_cast<float>(std::pow(b.getVelocity().x - mean.x, 2) + std::pow(b.getVelocity().y - mean.y, 2));
       }
-      standard_deviation = std::sqrt(sum_of_squared_deviations / v.size());
+      standard_deviation = std::sqrt(sum_of_squared_deviations / static_cast<float>(v.size()));
       return standard_deviation;
     }
     else
