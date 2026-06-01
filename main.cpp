@@ -48,9 +48,11 @@ int main()
 
   sf::RenderWindow window2(sf::VideoMode(500, 600), "Velocity");
   window2.setFramerateLimit(60);
+  window2.setPosition(sf::Vector2i(12, 300));
 
   sf::RenderWindow window3(sf::VideoMode(500, 600), "Distance");
   window3.setFramerateLimit(60);
+  window3.setPosition(sf::Vector2i(1422, 300));
 
   sf::Clock clock;
 
