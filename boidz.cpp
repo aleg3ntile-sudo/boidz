@@ -6,7 +6,7 @@ Coords operator+(const Coords &p, const Coords &q) {
   return {p.x + q.x, p.y + q.y};
 }
 
-sf::ConvexShape createBoidShape(double size) {
+sf::ConvexShape createBoidShape(float size) {
   sf::ConvexShape shape;
   shape.setPointCount(3);
 
@@ -32,13 +32,13 @@ Coords SingleBoid::getPosition() const { return position; }
 
 Coords SingleBoid::getVelocity() const { return velocity; }
 
-void SingleBoid::update_Position_in_time_for_single_boid(double time) {
+void SingleBoid::update_Position_in_time_for_single_boid(float time) {
   position.x = position.x + time * velocity.x;
   position.y = position.y + time * velocity.y;
 }
 
 void SingleBoid::update_Shape() {
-  double angle = std::atan2(velocity.y, velocity.x) * 180 / M_PI;
+  float angle = std::atan2(velocity.y, velocity.x) * 180 / M_PI;
   shape.setPosition(sf::Vector2f(position.x, position.y));
   shape.setRotation(angle);
 }
@@ -48,7 +48,7 @@ void SingleBoid::update_Velocity_with_rules_for_single_boid(
   velocity = updated_velocity;
 }
 
-void SingleBoid::BorderRestriction(double width, double height) {
+void SingleBoid::BorderRestriction(float width, float height) {
   if (position.x < 0.)
     position.x += width;
   else {
@@ -66,8 +66,8 @@ void SingleBoid::BorderRestriction(double width, double height) {
   }
 }
 
-void SingleBoid::SpeedRestriction(double speed_limit) {
-  double speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+void SingleBoid::SpeedRestriction(float speed_limit) {
+  float speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
   if (speed > speed_limit) {
     velocity.x = velocity.x * speed_limit / speed;
     velocity.y = velocity.y * speed_limit / speed;

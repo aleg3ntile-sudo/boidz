@@ -5,15 +5,15 @@
 
 namespace boidz {
 
-double get_distance(const SingleBoid &b1, const SingleBoid &b2);
+float get_distance(const SingleBoid &b1, const SingleBoid &b2);
 
-bool check_critical_distance(const double &d_s, const SingleBoid &b1,
+bool check_critical_distance(const float &d_s, const SingleBoid &b1,
                              const SingleBoid &b2);
 
-bool check_neighbours(const double &d, const SingleBoid &b1,
+bool check_neighbours(const float &d, const SingleBoid &b1,
                       const SingleBoid &b2);
 
-std::vector<SingleBoid> get_neighbours(const double &distance,
+std::vector<SingleBoid> get_neighbours(const float &distance,
                                        const SingleBoid &s, const Flock &f);
 
 Coords separation_for_single_boid(const Parameters &par, const Flock &stormo,

@@ -10,26 +10,26 @@
 
 namespace boidz {
 struct Coords {
-  double x;
-  double y;
+  float x;
+  float y;
 
   Coords() = default;
-  Coords(double x_, double y_) : x(x_), y(y_) {}
+  Coords(float x_, float y_) : x(x_), y(y_) {}
 };
 
 Coords operator+(const Coords &p, const Coords &q);
 
 struct Parameters {
-  double d;   // parametro vicini
-  double d_s; // paramtero vicini critici
-  double s;   // parametro di separazione
-  double a;   // parametro di allineamento
-  double c;   // parametro di coesione
-  double h;   // parametro di caccia
-  double p;   // parametro di preda
+  float d;   // parametro vicini
+  float d_s; // paramtero vicini critici
+  float s;   // parametro di separazione
+  float a;   // parametro di allineamento
+  float c;   // parametro di coesione
+  float h;   // parametro di caccia
+  float p;   // parametro di preda
 };
 
-sf::ConvexShape createBoidShape(double size);
+sf::ConvexShape createBoidShape(float size);
 
 class SingleBoid {
   Coords position;
@@ -44,10 +44,10 @@ public:
   Coords getPosition() const;
   Coords getVelocity() const;
 
-  void update_Position_in_time_for_single_boid(double time);
+  void update_Position_in_time_for_single_boid(float time);
   void update_Velocity_with_rules_for_single_boid(Coords updated_velocity);
-  void BorderRestriction(double width, double height);
-  void SpeedRestriction(double speed_limit);
+  void BorderRestriction(float width, float height);
+  void SpeedRestriction(float speed_limit);
   void update_Shape();
   void draw(sf::RenderWindow &window) const;
   void setColor(const sf::Color &c);

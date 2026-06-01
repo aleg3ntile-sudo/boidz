@@ -6,33 +6,33 @@
 namespace boidz
 {
 
-  double get_distance(const SingleBoid &b1, const SingleBoid &b2)
+  float get_distance(const SingleBoid &b1, const SingleBoid &b2)
   {
     Coords a = b1.getPosition();
     Coords b = b2.getPosition();
     assert(std::isfinite(a.x) && std::isfinite(a.y));
     assert(std::isfinite(b.x) && std::isfinite(b.y));
 
-    double distance = std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
+    float distance = std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
 
     assert(distance >= 0.);
     return distance;
   }
 
-  bool check_critical_distance(const double &d_s, const SingleBoid &b1,
+  bool check_critical_distance(const float &d_s, const SingleBoid &b1,
                                const SingleBoid &b2)
   {
     assert(d_s > 0.);
     Coords a = b1.getPosition();
     Coords b = b2.getPosition();
-    double critical_distance =
+    float critical_distance =
         std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2) <= std::pow(d_s, 2);
 
     assert(critical_distance >= 0.);
     return critical_distance;
   }
 
-  bool check_neighbours(const double &d, const SingleBoid &b1,
+  bool check_neighbours(const float &d, const SingleBoid &b1,
                         const SingleBoid &b2)
   {
     Coords a = b1.getPosition();
@@ -41,7 +41,7 @@ namespace boidz
     return std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2) <= std::pow(d, 2);
   }
 
-  std::vector<SingleBoid> get_neighbours(const double &distance,
+  std::vector<SingleBoid> get_neighbours(const float &distance,
                                          const SingleBoid &s, const Flock &f)
   {
     assert(distance >= 0.);
@@ -65,8 +65,8 @@ namespace boidz
   Coords separation_for_single_boid(const Parameters &par, const Flock &stormo,
                                     const SingleBoid &a)
   {
-    double sum_x{0};
-    double sum_y{0};
+    float sum_x{0};
+    float sum_y{0};
     auto neighbours = get_neighbours(par.d, a, stormo);
     assert(par.d > 0.);
 
