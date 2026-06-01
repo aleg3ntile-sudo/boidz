@@ -13,7 +13,7 @@ int main() {
     params.s = read_parameter("Separation parameter ", 0.5f, 5.f);
     params.a = read_parameter("Alignment parameter ", 0.05f, 1.f);
     params.c = read_parameter("Cohesion parameter ", 0.01f, 0.05f);
-    flock_size = read_parameter("Flock size ", 1, 100);
+    flock_size = read_parameter("Flock size ", 1, 200);
     params.h = 1.;
     params.p = 0.5;
   } catch (const std::runtime_error &e) {
