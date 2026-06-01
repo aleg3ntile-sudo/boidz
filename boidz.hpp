@@ -20,9 +20,9 @@ struct Coords {
 Coords operator+(const Coords &p, const Coords &q);
 
 struct Parameters {
-  double s;   // parametro di separazione
   double d;   // parametro vicini
   double d_s; // paramtero vicini critici
+  double s;   // parametro di separazione
   double a;   // parametro di allineamento
   double c;   // parametro di coesione
   double h;   // parametro di caccia

@@ -25,8 +25,11 @@ Coords alignment_for_single_boid(const Parameters &par, const Flock &stormo,
 Coords cohesion_for_single_boid(const Parameters &par, const Flock &stormo,
                                 const SingleBoid &s);
 
-Coords hunt(const SingleBoid &hunter, const Flock &stormo,
+Coords hunt_the_flock(const SingleBoid &hunter, const Flock &stormo,
             const Parameters &par);
+
+Coords hunt_neighbours(const SingleBoid &hunter, const Flock &stormo,
+    const Parameters &par);
 
 Coords hunter_repulsion(const SingleBoid &hunter, const SingleBoid &prey,
                         const Parameters &par);

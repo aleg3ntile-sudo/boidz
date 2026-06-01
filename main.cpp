@@ -1,18 +1,54 @@
-#include <SFML/Graphics.hpp>
-#include <algorithm>
-#include <random>
-
 #include "boidz.hpp"
 #include "rules.hpp"
 #include "stats.hpp"
+#include <SFML/Graphics.hpp>
+#include <algorithm>
+#include <random>
+#include <iostream>
+#include <string>
+#include <stdexcept>
+
+template <typename T>
+T read_parameters(const std::string &name, T min, T max)
+{
+  T p;
+
+  std::cout << "Insert " << name << "between " << min << " and " << max << '\n';
+  std::cin >> p;
+  if (p < min || p > max)
+  {
+    throw std::runtime_error;
+  }
+  return p;
+}
 
 using namespace boidz;
-int main() {
+int main()
+{
   sf::RenderWindow window(sf::VideoMode(800, 600), "Boids");
   window.setFramerateLimit(60);
 
   sf::RenderWindow window2(sf::VideoMode(500, 600), "Statistics");
   window2.setFramerateLimit(60);
+
+  int flock_size{};
+  Parameters params{};
+  try
+  {
+    params.d = read_parameters("Neighbours distance ", 20., 100.);
+    params.d_s = read_parameters("Critical distance ", 5., 25.);
+    params.s = read_parameters("Separation parameter ", 0.5, 5.);
+    params.a = read_parameters("Alignment parameter ", 0.05, 1.);
+    params.c = read_parameters("Cohesion parameter ", 0.01, 0.05);
+    flock_size = read_parameters("Flock size ", 1, 100);
+    params.h = 1.;
+    params.p = 0.5;
+  }
+  catch (const std::runtime_error &e)
+  {
+    std::cerr << "Errore" << '\n';
+    return EXIT_FAILURE;
+  }
 
   Flock stormo{};
   std::random_device r;
@@ -21,17 +57,16 @@ int main() {
   std::uniform_real_distribution<double> py{0., 100.};
   std::uniform_real_distribution<double> vel{-50., 50.};
 
-  for (int j{0}; j != 20; ++j) {
+  for (int j{0}; j != flock_size; ++j)
+  {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
     SingleBoid b = SingleBoid(p, v, j);
     stormo.flock.push_back(b);
   }
 
-  SingleBoid hunter{{400., 300.}, {0., 0.}, 104};
+  SingleBoid hunter{{400., 300.}, {0., 0.}, -1};
   hunter.setColor(sf::Color(255, 100, 100));
-
-  Parameters params{1.2, 50.0, 7.5, 0.3, 0.02, 1., 0.5};
 
   sf::Clock clock;
 
@@ -40,6 +75,8 @@ int main() {
 
   sf::CircleShape point(2.f);
   point.setFillColor(sf::Color::Red);
+  sf::CircleShape dot(2.f);
+  dot.setFillColor(sf::Color::Green);
 
   sf::Vector2f origin(margine_x, 600.f - margine_y);
 
@@ -56,35 +93,59 @@ int main() {
   axis[3].position = sf::Vector2f(origin.x, 50.f);
   axis[3].color = axis_color;
 
-  const size_t max_points =
-      450; // numero massimo di punti sul grafico per veitare oveflow
+  sf::RectangleShape box(sf::Vector2f(100.f, 60.f));
+  box.setPosition(400.f, 0.f);
+  box.setFillColor(sf::Color::White);
+  sf::Text label;
+  sf::Text label2;
+  sf::Font font;
+  label.setFont(font);
+  label2.setFont(font);
+  label.setCharacterSize(12);
+  label2.setCharacterSize(12);
+  label.setFillColor(sf::Color::Black);
+  label2.setFillColor(sf::Color::Black);
+  label.setPosition(300.f, 10.f);
+  label2.setPosition(300.f, 20.f);
+
+  const size_t max_points = 450;
   std::vector<Coords> vector_of_mean_speeds{};
+  std::vector<double> vector_of_distances{};
+  std::vector<double> vector_of_mean_distances{};
 
   double timer = 0.;
-  const double delay = 5;
-  while (window.isOpen() || window2.isOpen()) {
+  const double delay = 5.;
+  while (window.isOpen() || window2.isOpen())
+  {
     sf::Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
+    while (window.pollEvent(event))
+    {
+      if (event.type == sf::Event::Closed)
+      {
         window.close();
       }
     }
-    while (window2.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
+    while (window2.pollEvent(event))
+    {
+      if (event.type == sf::Event::Closed)
+      {
         window2.close();
       }
     }
 
-    if (window.isOpen()) {
+    if (window.isOpen())
+    {
       double dt = clock.restart().asSeconds();
       timer += dt;
       std::vector<Coords> updated_velocities{};
-      for (auto &x : stormo.flock) {
+      for (auto &x : stormo.flock)
+      {
         Coords new_velocity = create_velocity_with_rules_for_single_boid(
             params, stormo, x, hunter);
         updated_velocities.push_back(new_velocity);
       }
-      for (long unsigned int i = 0; i != stormo.flock.size(); ++i) {
+      for (long unsigned int i = 0; i != stormo.flock.size(); ++i)
+      {
         stormo.flock[i].update_Velocity_with_rules_for_single_boid(
             updated_velocities[i]);
         stormo.flock[i].update_Position_in_time_for_single_boid(dt);
@@ -93,8 +154,9 @@ int main() {
         stormo.flock[i].update_Shape();
       }
 
-      if (timer >= delay) {
-        Coords new_hunt_velocity = hunt(hunter, stormo, params);
+      if (timer >= delay)
+      {
+        Coords new_hunt_velocity = hunt_the_flock(hunter, stormo, params) + hunt_neighbours(hunter, stormo, params);
         hunter.update_Velocity_with_rules_for_single_boid(new_hunt_velocity);
         hunter.update_Position_in_time_for_single_boid(dt);
         hunter.BorderRestriction(800., 600.);
@@ -104,52 +166,106 @@ int main() {
 
       Coords mean_speed_for_cycle = mean_velocity(stormo);
       vector_of_mean_speeds.push_back(mean_speed_for_cycle);
-      if (vector_of_mean_speeds.size() > max_points) {
+      if (vector_of_mean_speeds.size() > max_points)
+      {
         vector_of_mean_speeds.erase(
             vector_of_mean_speeds.begin(),
             vector_of_mean_speeds.begin() +
                 (vector_of_mean_speeds.size() -
+                 max_points));
+      }
+
+      for (auto first = stormo.flock.begin(), last = stormo.flock.end(); first != last; ++first)
+      {
+        double boidz_distance = get_distance(*first, *(first + 1));
+        vector_of_distances.push_back(boidz_distance);
+      }
+
+      double mean_distance_boidz = (std::accumulate(
+                                        vector_of_distances.begin(), vector_of_distances.end(), 0.) /
+                                    vector_of_distances.size());
+      vector_of_mean_distances.push_back(mean_distance_boidz);
+      vector_of_distances.erase(vector_of_distances.begin(), vector_of_distances.end());
+      if (vector_of_mean_distances.size() > max_points)
+      {
+        vector_of_mean_distances.erase(
+            vector_of_mean_distances.begin(),
+            vector_of_mean_distances.begin() +
+                (vector_of_mean_distances.size() -
                  max_points)); // toglie i punti extra dal grafico
       }
 
       window.clear(sf::Color(15, 17, 26));
-      for (auto &b : stormo.flock) {
+      for (auto &b : stormo.flock)
+      {
         b.draw(window);
       }
       hunter.draw(window);
       window.display();
     }
 
-    if (window2.isOpen()) {
+    if (window2.isOpen())
+    {
       window2.clear();
       window2.draw(axis);
 
       int visible_count = vector_of_mean_speeds.size();
+      int visible_count2 = vector_of_mean_distances.size();
+      int i{0};
       double graph_left = 50.0;
       double graph_right = 450.0;
       double graph_width = graph_right - graph_left;
       double x_step;
-      if (visible_count > 1) {
+      if (visible_count > 1)
+      {
         x_step = graph_width / (visible_count - 1);
-      } else {
+      }
+      else
+      {
         x_step = 0.0;
       }
 
-      for (int i = 0; i < visible_count; ++i) {
+      for (; i < visible_count; ++i)
+      {
         double output_speed =
             std::sqrt(std::pow(vector_of_mean_speeds[i].x, 2) +
                       std::pow(vector_of_mean_speeds[i].y, 2));
         double x = graph_left + x_step * i;
         double y = 550.0 - output_speed;
-        if (y < 50.0) {
+        if (y < 50.0)
+        {
           y = 50.0;
         }
-        if (y > 550.0) {
+        if (y > 550.0)
+        {
           y = 550.0;
         }
+        label.setString("Velocità media = vector_of_mean_speeds[i]");
         point.setPosition((float)x, (float)y);
         window2.draw(point);
       }
+
+      for (auto first = vector_of_mean_distances.begin(),
+                last = vector_of_mean_distances.end();
+           first != last, i < visible_count2; ++first, ++i)
+      {
+        double x = graph_left + x_step * i;
+        double y = 550.0 - *first;
+        if (y < 50.0)
+        {
+          y = 50.0;
+        }
+        if (y > 550.0)
+        {
+          y = 550.0;
+        }
+        label2.setString("Distanza media = *first ");
+        dot.setPosition((float)x, (float)y);
+        window2.draw(dot);
+      }
+      window2.draw(box);
+      window2.draw(label);
+      window2.draw(label2);
       window2.display();
     }
   }
