@@ -1,9 +1,8 @@
-
-
 #ifndef BOIDZ_HPP
 #define BOIDZ_HPP
 
 #include <SFML/Graphics.hpp>
+#include "parameters.hpp"
 #include <algorithm>
 #include <cmath>
 #include <vector>
@@ -18,16 +17,6 @@ struct Coords {
 };
 
 Coords operator+(const Coords &p, const Coords &q);
-
-struct Parameters {
-  float d;   // parametro vicini
-  float d_s; // paramtero vicini critici
-  float s;   // parametro di separazione
-  float a;   // parametro di allineamento
-  float c;   // parametro di coesione
-  float h;   // parametro di caccia
-  float p;   // parametro di preda
-};
 
 sf::ConvexShape createBoidShape(float size);
 
