@@ -33,8 +33,8 @@ public:
   Coords getPosition() const;
   Coords getVelocity() const;
 
-  void update_Position_in_time_for_single_boid(float time);
-  void update_Velocity_with_rules_for_single_boid(Coords updated_velocity);
+  void update_Position_in_time(float time);
+  void update_Velocity_with_rules(Coords updated_velocity);
   void BorderRestriction(float width, float height);
   void SpeedRestriction(float speed_limit);
   void update_Shape();

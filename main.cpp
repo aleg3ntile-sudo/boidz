@@ -133,13 +133,13 @@ int main()
       std::vector<Coords> updated_velocities{};
 
       std::for_each(stormo.flock.begin(), stormo.flock.end(), [&](SingleBoid &b)
-                    {Coords new_velocity = create_velocity_with_rules_for_single_boid(params, stormo, b, hunter);
+                    {Coords new_velocity = create_velocity_with_rules(params, stormo, b, hunter);
                      updated_velocities.push_back(new_velocity); });
 
       std::for_each(stormo.flock.begin(), stormo.flock.end(),
                     [&](SingleBoid &b)
-                    {b.update_Velocity_with_rules_for_single_boid(updated_velocities[&b - &stormo.flock[0]]);
-                     b.update_Position_in_time_for_single_boid(dt); 
+                    {b.update_Velocity_with_rules(updated_velocities[&b - &stormo.flock[0]]);
+                     b.update_Position_in_time(dt); 
                      b.BorderRestriction(800., 600.);
                      b.SpeedRestriction(130);
                      b.update_Shape(); });
@@ -147,8 +147,8 @@ int main()
       if (timer >= delay)
       {
         Coords new_hunt_velocity = hunt_the_flock(hunter, stormo, params) + hunt_neighbours(hunter, stormo, params);
-        hunter.update_Velocity_with_rules_for_single_boid(new_hunt_velocity);
-        hunter.update_Position_in_time_for_single_boid(dt);
+        hunter.update_Velocity_with_rules(new_hunt_velocity);
+        hunter.update_Position_in_time(dt);
         hunter.BorderRestriction(800., 600.);
         hunter.SpeedRestriction(100);
         hunter.update_Shape();

@@ -54,7 +54,7 @@ std::vector<SingleBoid> get_neighbours(const float &distance,
   return neighbours;
 }
 
-Coords separation_for_single_boid(const Parameters &par, const Flock &stormo,
+Coords separation(const Parameters &par, const Flock &stormo,
                                   const SingleBoid &a) {
   float sum_x{0};
   float sum_y{0};
@@ -74,7 +74,7 @@ Coords separation_for_single_boid(const Parameters &par, const Flock &stormo,
   return v_separation;
 }
 
-Coords alignment_for_single_boid(const Parameters &par, const Flock &stormo,
+Coords alignment(const Parameters &par, const Flock &stormo,
                                  const SingleBoid &s) {
   Coords v_alignment;
   Coords v_sum{0., 0.};
@@ -98,7 +98,7 @@ Coords alignment_for_single_boid(const Parameters &par, const Flock &stormo,
   }
 }
 
-Coords cohesion_for_single_boid(const Parameters &par, const Flock &stormo,
+Coords cohesion(const Parameters &par, const Flock &stormo,
                                 const SingleBoid &s) {
   Coords com{0., 0.};
   Coords v_cohesion;
@@ -169,13 +169,13 @@ Coords hunter_repulsion(const SingleBoid &hunter, const SingleBoid &prey,
   return v_prey;
 }
 
-Coords create_velocity_with_rules_for_single_boid(const Parameters &par,
+Coords create_velocity_with_rules(const Parameters &par,
                                                   const Flock &stormo,
                                                   const SingleBoid &b,
                                                   const SingleBoid &hunter) {
-  return b.getVelocity() + separation_for_single_boid(par, stormo, b) +
-         alignment_for_single_boid(par, stormo, b) +
-         cohesion_for_single_boid(par, stormo, b) +
+  return b.getVelocity() + separation(par, stormo, b) +
+         alignment(par, stormo, b) +
+         cohesion(par, stormo, b) +
          hunter_repulsion(hunter, b, par);
 }
 

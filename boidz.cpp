@@ -32,7 +32,7 @@ Coords SingleBoid::getPosition() const { return position; }
 
 Coords SingleBoid::getVelocity() const { return velocity; }
 
-void SingleBoid::update_Position_in_time_for_single_boid(float time) {
+void SingleBoid::update_Position_in_time(float time) {
   position.x = position.x + time * velocity.x;
   position.y = position.y + time * velocity.y;
 }
@@ -43,7 +43,7 @@ void SingleBoid::update_Shape() {
   shape.setRotation(angle);
 }
 
-void SingleBoid::update_Velocity_with_rules_for_single_boid(
+void SingleBoid::update_Velocity_with_rules(
     Coords updated_velocity) {
   velocity = updated_velocity;
 }

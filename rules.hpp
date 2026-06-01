@@ -16,13 +16,13 @@ bool check_neighbours(const float &d, const SingleBoid &b1,
 std::vector<SingleBoid> get_neighbours(const float &distance,
                                        const SingleBoid &s, const Flock &f);
 
-Coords separation_for_single_boid(const Parameters &par, const Flock &stormo,
+Coords separation(const Parameters &par, const Flock &stormo,
                                   const SingleBoid &a);
 
-Coords alignment_for_single_boid(const Parameters &par, const Flock &stormo,
+Coords alignment(const Parameters &par, const Flock &stormo,
                                  const SingleBoid &s);
 
-Coords cohesion_for_single_boid(const Parameters &par, const Flock &stormo,
+Coords cohesion(const Parameters &par, const Flock &stormo,
                                 const SingleBoid &s);
 
 Coords hunt_the_flock(const SingleBoid &hunter, const Flock &stormo,
@@ -34,7 +34,7 @@ Coords hunt_neighbours(const SingleBoid &hunter, const Flock &stormo,
 Coords hunter_repulsion(const SingleBoid &hunter, const SingleBoid &prey,
                         const Parameters &par);
 
-Coords create_velocity_with_rules_for_single_boid(const Parameters &par,
+Coords create_velocity_with_rules(const Parameters &par,
                                                   const Flock &stormo,
                                                   const SingleBoid &b,
                                                   const SingleBoid &hunter);
