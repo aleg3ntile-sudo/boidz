@@ -28,12 +28,19 @@ namespace boidz
   std::vector<float> get_vector_of_distances(Flock const &f)
   {
     std::vector<float> vector_of_distances{};
+    float boidz_distance{0.f};
     if (f.flock.size() != 0)
     {
-      for (auto first = f.flock.begin(), last = f.flock.end() - 1; first != last; ++first)
+      for (auto &b : f.flock)
       {
-        float boidz_distance = get_distance(*first, *(first + 1));
-        vector_of_distances.push_back(boidz_distance);
+        for (auto &c : f.flock)
+        {
+          if (b.getCardinality() != c.getCardinality())
+          {
+            boidz_distance = get_distance(b, c);
+            vector_of_distances.push_back(boidz_distance);
+          }
+        }
       }
       return vector_of_distances;
     }
@@ -56,26 +63,6 @@ namespace boidz
     else
     {
       return mean_distance;
-    }
-  }
-
-  Coords centre_of_mass_position(Flock const &f)
-  {
-    Coords centre_of_mass{0., 0.};
-    if (f.flock.size() != 0)
-    {
-      for (auto &b : f.flock)
-      {
-        centre_of_mass.x += b.getVelocity().x;
-        centre_of_mass.y += b.getVelocity().y;
-      }
-      centre_of_mass.x = (centre_of_mass.x / static_cast<float>(f.flock.size()));
-      centre_of_mass.y = (centre_of_mass.y / static_cast<float>(f.flock.size()));
-      return centre_of_mass;
-    }
-    else
-    {
-      return centre_of_mass;
     }
   }
 
