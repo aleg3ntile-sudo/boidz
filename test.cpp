@@ -2,6 +2,7 @@
 #include "doctest.h"
 #include "rules.hpp"
 #include "stats.hpp"
+#include <random>
 using namespace boidz;
 
 // operator +
@@ -341,9 +342,29 @@ TEST_CASE("get_vector_of_distances: two boids return two distances")
   f.flock.push_back(SingleBoid{{3.f, 4.f}, {0.f, 0.f}, 1});
 
   auto result = get_vector_of_distances(f);
-  CHECK(result.size() == 2);
+  CHECK(result.size() == 1);
   CHECK(result[0] == doctest::Approx(5.f));
-  CHECK(result[1] == doctest::Approx(5.f));
+}
+
+TEST_CASE("get_vector_of_distances: distances calculated")
+{
+  Flock f{};
+  std::random_device r;
+  std::default_random_engine eng(r());
+  std::uniform_real_distribution<float> px{0.f, 200.f};
+  std::uniform_real_distribution<float> py{0.f, 200.f};
+  std::uniform_real_distribution<float> vel{-50.f, 50.f};
+  int i{0};
+
+  for (float j{0.f}; j != 10.f; ++j, ++i) {
+    Coords p{px(eng), py(eng)};
+    Coords v{vel(eng), vel(eng)};
+    SingleBoid b = SingleBoid(p, v, i);
+    f.flock.push_back(b);
+  }
+
+  auto result = get_vector_of_distances(f);
+  CHECK(result.size() == 45);
 }
 
 TEST_CASE("mean_distance: empty flock returns 0")

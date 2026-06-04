@@ -35,7 +35,7 @@ namespace boidz
       {
         for (auto &c : f.flock)
         {
-          if (b.getCardinality() != c.getCardinality())
+          if (b.getCardinality() < c.getCardinality())
           {
             boidz_distance = get_distance(b, c);
             vector_of_distances.push_back(boidz_distance);
