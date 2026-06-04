@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/ale/progetto_boids/boidz/build-release/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
