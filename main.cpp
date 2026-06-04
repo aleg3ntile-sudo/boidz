@@ -128,15 +128,15 @@ int main() {
                       updated_velocities.push_back(new_velocity);
                     });
 
-      std::for_each(stormo.flock.begin(), stormo.flock.end(),
-                    [&](SingleBoid &b) {
-                      b.update_Velocity_with_rules(
-                          updated_velocities[static_cast<size_t>(&b - &stormo.flock[0])]);
-                      b.update_Position_in_time(dt);
-                      b.BorderRestriction(800., 600.);
-                      b.SpeedRestriction(130);
-                      b.update_Shape();
-                    });
+      std::for_each(
+          stormo.flock.begin(), stormo.flock.end(), [&](SingleBoid &b) {
+            b.update_Velocity_with_rules(
+                updated_velocities[static_cast<size_t>(&b - &stormo.flock[0])]);
+            b.update_Position_in_time(dt);
+            b.BorderRestriction(800., 600.);
+            b.SpeedRestriction(130);
+            b.update_Shape();
+          });
 
       if (timer >= delay) {
         Coords new_hunt_velocity = hunt_the_flock(hunter, stormo, params) +
