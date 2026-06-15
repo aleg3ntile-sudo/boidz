@@ -91,10 +91,10 @@ int main() {
   label2.setPosition(200.f, 10.f);
 
   const size_t max_points = 450;
-  std::vector<Coords> vector_of_mean_speeds{};
+  std::vector<float> vector_of_mean_speeds{};
   std::vector<float> vector_of_mean_distances{};
-  std::vector<float> vector_of_standard_deviations_v{};
-  std::vector<float> vector_of_standard_deviations_d{};
+  std::vector<float> vector_of_standard_deviations_speed{};
+  std::vector<float> vector_of_standard_deviations_distance{};
 
   float timer = 0.;
   const float delay = 5.;
@@ -119,24 +119,19 @@ int main() {
     if (window.isOpen()) {
       float dt = clock.restart().asSeconds();
       timer += dt;
-      std::vector<Coords> updated_velocities{};
+      std::vector<Coords> updated_velocities(stormo.flock.size());
+      for (size_t i = 0; i < stormo.flock.size(); ++i) {
+        updated_velocities[i] = create_velocity_with_rules(params, stormo,
+                                                          stormo.flock[i], hunter);
+      }
 
-      std::for_each(stormo.flock.begin(), stormo.flock.end(),
-                    [&](SingleBoid &b) {
-                      Coords new_velocity =
-                          create_velocity_with_rules(params, stormo, b, hunter);
-                      updated_velocities.push_back(new_velocity);
-                    });
-
-      std::for_each(
-          stormo.flock.begin(), stormo.flock.end(), [&](SingleBoid &b) {
-            b.update_Velocity_with_rules(
-                updated_velocities[static_cast<size_t>(&b - &stormo.flock[0])]);
-            b.update_Position_in_time(dt);
-            b.BorderRestriction(800., 600.);
-            b.SpeedRestriction(130);
-            b.update_Shape();
-          });
+      for (size_t i = 0; i < stormo.flock.size(); ++i) {
+        stormo.flock[i].update_Velocity_with_rules(updated_velocities[i]);
+        stormo.flock[i].update_Position_in_time(dt);
+        stormo.flock[i].BorderRestriction(800., 600.);
+        stormo.flock[i].SpeedRestriction(130);
+        stormo.flock[i].update_Shape();
+      }
 
       if (timer >= delay) {
         Coords new_hunt_velocity = hunt_the_flock(hunter, stormo, params) +
@@ -148,7 +143,7 @@ int main() {
         hunter.update_Shape();
       }
 
-      Coords mean_speed_for_cycle = mean_velocity(stormo);
+      float mean_speed_for_cycle = mean_speed(stormo);
       vector_of_mean_speeds.push_back(mean_speed_for_cycle);
       if (vector_of_mean_speeds.size() > max_points) {
         vector_of_mean_speeds.erase(
@@ -157,15 +152,16 @@ int main() {
                 static_cast<long int>(
                     (vector_of_mean_speeds.size() - max_points)));
       }
-      float standard_deviation_velocity = standard_deviation(stormo.flock);
-      vector_of_standard_deviations_v.push_back(standard_deviation_velocity);
+      auto speeds = get_vector_of_speeds(stormo);
+      float standard_deviation_speed = standard_deviation(speeds);
+      vector_of_standard_deviations_speed.push_back(standard_deviation_speed);
 
       float mean_distance_boidz = mean_distance(stormo);
       vector_of_mean_distances.push_back(mean_distance_boidz);
       auto vector_of_distances = get_vector_of_distances(stormo);
       float standard_deviation_distance =
           standard_deviation(vector_of_distances);
-      vector_of_standard_deviations_d.push_back(standard_deviation_distance);
+      vector_of_standard_deviations_distance.push_back(standard_deviation_distance);
       if (vector_of_mean_distances.size() > max_points) {
         vector_of_mean_distances.erase(
             vector_of_mean_distances.begin(),
@@ -174,21 +170,21 @@ int main() {
                     (vector_of_mean_distances.size() -
                      max_points))); // toglie i punti extra dal grafico
       }
-      if (vector_of_standard_deviations_v.size() > max_points) {
-        vector_of_standard_deviations_v.erase(
-            vector_of_standard_deviations_v.begin(),
-            vector_of_standard_deviations_v.begin() +
+      if (vector_of_standard_deviations_speed.size() > max_points) {
+        vector_of_standard_deviations_speed.erase(
+            vector_of_standard_deviations_speed.begin(),
+            vector_of_standard_deviations_speed.begin() +
                 static_cast<long int>(
-                    (vector_of_standard_deviations_v.size() -
-                     max_points))); // toglie i punti extra dal grafico
+                    (vector_of_standard_deviations_speed.size() -
+                     max_points))); 
       }
-      if (vector_of_standard_deviations_d.size() > max_points) {
-        vector_of_standard_deviations_d.erase(
-            vector_of_standard_deviations_d.begin(),
-            vector_of_standard_deviations_d.begin() +
+      if (vector_of_standard_deviations_distance.size() > max_points) {
+        vector_of_standard_deviations_distance.erase(
+            vector_of_standard_deviations_distance.begin(),
+            vector_of_standard_deviations_distance.begin() +
                 static_cast<long int>(
-                    (vector_of_standard_deviations_d.size() -
-                     max_points))); // toglie i punti extra dal grafico
+                    (vector_of_standard_deviations_distance.size() -
+                     max_points))); 
       }
 
       window.clear(sf::Color(15, 17, 26));
@@ -215,9 +211,7 @@ int main() {
       }
 
       for (long unsigned int i{0}; i < visible_count; ++i) {
-        float output_speed =
-            std::sqrt(vector_of_mean_speeds[i].x * vector_of_mean_speeds[i].x +
-                      vector_of_mean_speeds[i].y * vector_of_mean_speeds[i].y);
+        float output_speed = vector_of_mean_speeds[i];
         float x = graph_left + (x_step * static_cast<float>(i));
         float y = 550.0f - output_speed;
         if (y < 50.0f) {
@@ -228,7 +222,7 @@ int main() {
         }
         label.setString(
             "Mean speed = " + std::to_string(output_speed) + '\n' +
-            "Error = " + std::to_string(vector_of_standard_deviations_v[i]));
+            "Error = " + std::to_string(vector_of_standard_deviations_speed[i]));
         point.setPosition(x, y);
         window2.draw(point);
       }
@@ -265,7 +259,7 @@ int main() {
         }
         label2.setString(
             "Mean distance =" + std::to_string(*first) + '\n' +
-            "Error = " + std::to_string(vector_of_standard_deviations_d[i]));
+            "Error = " + std::to_string(vector_of_standard_deviations_distance[i]));
         dot.setPosition(x, y);
         window3.draw(dot);
       }

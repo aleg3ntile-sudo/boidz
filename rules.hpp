@@ -2,7 +2,7 @@
 #define RULES_HPP
 
 #include "boidz.hpp"
-
+ 
 namespace boidz {
 
 float get_distance(const SingleBoid &b1, const SingleBoid &b2);
@@ -13,16 +13,16 @@ bool check_critical_distance(const float &d_s, const SingleBoid &b1,
 bool check_neighbours(const float &d, const SingleBoid &b1,
                       const SingleBoid &b2);
 
-std::vector<SingleBoid> get_neighbours(const float &distance,
+std::vector<SingleBoid>get_neighbours(const float &distance,
                                        const SingleBoid &s, const Flock &f);
 
-Coords separation(const Parameters &par, const Flock &stormo,
+Coords separation(const Parameters &par, const std::vector<SingleBoid> &neighbours,
                                   const SingleBoid &a);
 
-Coords alignment(const Parameters &par, const Flock &stormo,
+Coords alignment(const Parameters &par, const std::vector<SingleBoid> &neighbours,
                                  const SingleBoid &s);
 
-Coords cohesion(const Parameters &par, const Flock &stormo,
+Coords cohesion(const Parameters &par, const std::vector<SingleBoid> &neighbours,
                                 const SingleBoid &s);
 
 Coords hunt_the_flock(const SingleBoid &hunter, const Flock &stormo,

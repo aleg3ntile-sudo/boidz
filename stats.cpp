@@ -1,28 +1,31 @@
+#include "stats.hpp"
 #include "rules.hpp"
 #include <vector>
 #include <numeric>
 
 namespace boidz
 {
-
-  Coords mean_velocity(Flock const &f)
+  std::vector<float> get_vector_of_speeds(Flock const &f)
   {
-    Coords mean_velocity{0., 0.};
+    std::vector<float> vector_of_speeds{};
+    for (const auto &b : f.flock)
+    {
+      float speed = std::sqrt(b.getVelocity().x * b.getVelocity().x +
+                              b.getVelocity().y * b.getVelocity().y);
+      vector_of_speeds.push_back(speed);
+    }
+    return vector_of_speeds;
+  }
+
+  float mean_speed(Flock const &f)
+  {
+    float mean_speed{0.f};
     if (f.flock.size() != 0)
     {
-      for (auto &b : f.flock)
-      {
-        mean_velocity.x += std::abs(b.getVelocity().x);
-        mean_velocity.y += std::abs(b.getVelocity().y);
-      }
-      mean_velocity.x = (mean_velocity.x / static_cast<float>(f.flock.size()));
-      mean_velocity.y = (mean_velocity.y / static_cast<float>(f.flock.size()));
-      return mean_velocity;
+      auto vector_of_speeds = get_vector_of_speeds(f);
+      mean_speed = std::accumulate(vector_of_speeds.begin(), vector_of_speeds.end(), 0.f) / static_cast<float>(vector_of_speeds.size());
     }
-    else
-    {
-      return mean_velocity;
-    }
+    return mean_speed;
   }
 
   std::vector<float> get_vector_of_distances(Flock const &f)
@@ -31,9 +34,9 @@ namespace boidz
     float boidz_distance{0.f};
     if (f.flock.size() != 0)
     {
-      for (auto &b : f.flock)
+      for (const auto &b : f.flock)
       {
-        for (auto &c : f.flock)
+        for (const auto &c : f.flock)
         {
           if (b.getCardinality() < c.getCardinality())
           {
@@ -73,7 +76,7 @@ namespace boidz
     {
       float mean = std::accumulate(v.begin(), v.end(), 0.f) / static_cast<float>(v.size());
       float sum_of_squared_deviations = 0.f;
-      for (auto &x : v)
+      for (const auto &x : v)
       {
         sum_of_squared_deviations += static_cast<float>(std::pow(x - mean, 2));
       }
@@ -85,32 +88,6 @@ namespace boidz
       return standard_deviation;
     }
   }
-  float standard_deviation(std::vector<SingleBoid> const &v)
-  {
-    float standard_deviation{0.f};
-    if (v.size() != 0)
-    {
-      Coords mean{0.f, 0.f};
-      for (auto &b : v)
-      {
-        mean.x += b.getVelocity().x;
-        mean.y += b.getVelocity().y;
-      }
-      mean.x = mean.x / static_cast<float>(v.size());
-      mean.y = mean.y / static_cast<float>(v.size());
-
-      float sum_of_squared_deviations = 0.f;
-      for (auto &b : v)
-      {
-        sum_of_squared_deviations += static_cast<float>(std::pow(b.getVelocity().x - mean.x, 2) + std::pow(b.getVelocity().y - mean.y, 2));
-      }
-      standard_deviation = std::sqrt(sum_of_squared_deviations / static_cast<float>(v.size()));
-      return standard_deviation;
-    }
-    else
-    {
-      return standard_deviation;
-    }
-  }
+  
 
 } // namespace boidz
