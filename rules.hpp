@@ -5,39 +5,36 @@
  
 namespace boidz {
 
-float get_distance(const SingleBoid &b1, const SingleBoid &b2);
+float get_distance(const Boid &b1, const Boid &b2);
 
-bool check_critical_distance(const float &d_s, const SingleBoid &b1,
-                             const SingleBoid &b2);
+bool check_critical_distance(const float &d_s, const Boid &b1,
+                             const Boid &b2);
 
-bool check_neighbours(const float &d, const SingleBoid &b1,
-                      const SingleBoid &b2);
+std::vector<Boid>get_neighbours(const float &distance,
+                                       const Boid &s, const Flock &f);
 
-std::vector<SingleBoid>get_neighbours(const float &distance,
-                                       const SingleBoid &s, const Flock &f);
+Coords separation(const Parameters &par, const std::vector<Boid> &neighbours,
+                                  const Boid &a);
 
-Coords separation(const Parameters &par, const std::vector<SingleBoid> &neighbours,
-                                  const SingleBoid &a);
+Coords alignment(const Parameters &par, const std::vector<Boid> &neighbours,
+                                 const Boid &s);
 
-Coords alignment(const Parameters &par, const std::vector<SingleBoid> &neighbours,
-                                 const SingleBoid &s);
+Coords cohesion(const Parameters &par, const std::vector<Boid> &neighbours,
+                                const Boid &s);
 
-Coords cohesion(const Parameters &par, const std::vector<SingleBoid> &neighbours,
-                                const SingleBoid &s);
-
-Coords hunt_the_flock(const SingleBoid &hunter, const Flock &stormo,
+Coords hunt_the_flock(const Boid &hunter, const Flock &stormo,
             const Parameters &par);
 
-Coords hunt_neighbours(const SingleBoid &hunter, const Flock &stormo,
+Coords hunt_neighbours(const Boid &hunter, const Flock &stormo,
     const Parameters &par);
 
-Coords hunter_repulsion(const SingleBoid &hunter, const SingleBoid &prey,
+Coords hunter_repulsion(const Boid &hunter, const Boid &prey,
                         const Parameters &par);
 
 Coords create_velocity_with_rules(const Parameters &par,
                                                   const Flock &stormo,
-                                                  const SingleBoid &b,
-                                                  const SingleBoid &hunter);
+                                                  const Boid &b,
+                                                  const Boid &hunter);
 
 } // namespace boidz
 #endif

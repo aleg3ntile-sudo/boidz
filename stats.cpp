@@ -5,6 +5,12 @@
 
 namespace boidz
 {
+
+  struct Analytics{
+    float mean;
+    float deviation;
+  };
+
   std::vector<float> get_vector_of_speeds(Flock const &f)
   {
     std::vector<float> vector_of_speeds{};
@@ -88,6 +94,5 @@ namespace boidz
       return standard_deviation;
     }
   }
-  
 
 } // namespace boidz

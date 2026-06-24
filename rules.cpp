@@ -7,52 +7,41 @@
 namespace boidz
 {
 
-  float get_distance(const SingleBoid &b1, const SingleBoid &b2)
+  float get_distance(const Boid &b1, const Boid &b2)
   {
     Coords a = b1.getPosition();
     Coords b = b2.getPosition();
+    Coords c = a - b;
     assert(std::isfinite(a.x) && std::isfinite(a.y));
     assert(std::isfinite(b.x) && std::isfinite(b.y));
 
-    float distance = static_cast<float>(std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2)));
+    float distance = static_cast<float>(std::sqrt(c.x * c.x + c.y * c.y));
 
     assert(distance >= 0.);
     return distance;
   }
 
-  bool check_critical_distance(const float &d_s, const SingleBoid &b1,
-                               const SingleBoid &b2)
+  bool check_critical_distance(const float &d_s, const Boid &b1,
+                               const Boid &b2)
   {
     assert(d_s >= 0.);
     Coords a = b1.getPosition();
     Coords b = b2.getPosition();
-    float critical_distance =
-        std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2) <= std::pow(d_s, 2);
-
-    assert(critical_distance >= 0.);
+    Coords c = a - b;
+    bool critical_distance = c.x * c.x + c.y * c.y <= d_s * d_s;
     return critical_distance;
   }
 
-  bool check_neighbours(const float &d, const SingleBoid &b1,
-                        const SingleBoid &b2)
-  {
-    Coords a = b1.getPosition();
-    Coords b = b2.getPosition();
-    float dx = a.x - b.x;
-    float dy = a.y - b.y;
-    return dx * dx + dy * dy <= d * d;
-  }
-
-  std::vector<SingleBoid> get_neighbours(const float &distance,
-                                         const SingleBoid &s, const Flock &f)
+  std::vector<Boid> get_neighbours(const float &distance,
+                                         const Boid &s, const Flock &f)
   {
     assert(distance >= 0.);
-    std::vector<SingleBoid> neighbours{};
+    std::vector<Boid> neighbours{};
 
     for (const auto &x : f.flock)
     {
       if (s.getCardinality() != x.getCardinality() &&
-          check_neighbours(distance, s, x))
+          check_critical_distance(distance, s, x))
       {
         neighbours.push_back(x);
       }
@@ -61,147 +50,135 @@ namespace boidz
     return neighbours;
   }
 
-  Coords separation(const Parameters &par, const std::vector<SingleBoid> &neighbours,
-                    const SingleBoid &a)
+  Coords separation(const Parameters &par, const std::vector<Boid> &neighbours,
+                    const Boid &a)
   {
-    float sum_x{0};
-    float sum_y{0};
-    assert(par.d >= 0.);
+    Coords sum{0, 0};
+    assert(par.d_s >= 0.);
+    assert(par.s >= 0.);
 
-    for (
-      const auto &b : neighbours)
+    for (const auto &b : neighbours)
     {
       if (check_critical_distance(par.d_s, a, b))
       {
-        sum_x += b.getPosition().x - a.getPosition().x;
-        sum_y += b.getPosition().y - a.getPosition().y;
+        sum += (b.getPosition() - a.getPosition());
       }
     }
 
-    Coords v_separation{-(par.s * sum_x), -(par.s * sum_y)};
-    assert(par.s >= 0.);
+    Coords v_separation = sum * (-par.s);
     assert(std::isfinite(v_separation.x) && std::isfinite(v_separation.y));
     return v_separation;
   }
 
-  Coords alignment(const Parameters &par, const std::vector<SingleBoid> &neighbours,
-                   const SingleBoid &s)
+  Coords alignment(const Parameters &par, const std::vector<Boid> &neighbours,
+                   const Boid &s)
   {
-    Coords v_alignment;
-    Coords v_sum{0., 0.};
-    auto n = neighbours.size();
+    Coords v_alignment{0., 0.};
+    Coords sum{0., 0.};
+    auto n = static_cast<float>(neighbours.size());
 
     for (const auto &b : neighbours)
     {
-      v_sum.x += b.getVelocity().x;
-      v_sum.y += b.getVelocity().y;
+      sum += b.getVelocity();
     }
-    if (neighbours.size() >= 1)
+    if (n >= 1)
     {
-      v_alignment = Coords{par.a * ((v_sum.x / static_cast<float>(n)) - s.getVelocity().x),
-                           par.a * ((v_sum.y / static_cast<float>(n)) - s.getVelocity().y)};
+      v_alignment = (sum / n - s.getVelocity()) * (par.a);
       assert(par.a >= 0.);
       assert(std::isfinite(v_alignment.x) && std::isfinite(v_alignment.y));
       return v_alignment;
     }
     else
     {
-      v_alignment = Coords{0.0, 0.0};
       return v_alignment;
     }
   }
 
-  Coords cohesion(const Parameters &par, const std::vector<SingleBoid> &neighbours,
-                  const SingleBoid &s)
+  Coords cohesion(const Parameters &par, const std::vector<Boid> &neighbours,
+                  const Boid &s)
   {
     Coords com{0., 0.};
-    Coords v_cohesion;
-    auto n = neighbours.size();
+    Coords v_cohesion{0., 0.};
+    assert(par.c >= 0.);
+    auto n = static_cast<float>(neighbours.size());
     for (const auto &b : neighbours)
     {
-      com.x += b.getPosition().x / static_cast<float>(n);
-      com.y += b.getPosition().y / static_cast<float>(n);
+      com += b.getPosition() / n;
     }
 
-    if (neighbours.size() >= 1)
+    if (n >= 1)
     {
-      v_cohesion = Coords{par.c * (com.x - s.getPosition().x),
-                          par.c * (com.y - s.getPosition().y)};
-      assert(par.c >= 0.);
+      v_cohesion = (com - s.getPosition()) * (par.c);
       assert(std::isfinite(v_cohesion.x) && std::isfinite(v_cohesion.y));
       return v_cohesion;
     }
     else
     {
-      v_cohesion = Coords{0.0, 0.0};
       return v_cohesion;
     }
   }
 
-  Coords hunt_the_flock(const SingleBoid &hunter, const Flock &stormo,
+  Coords hunt_the_flock(const Boid &hunter, const Flock &stormo,
                         const Parameters &par)
   {
     Coords com{0., 0.};
-    Coords v_hunt;
+    Coords v_hunt{0., 0.};
+    assert(par.h >= 0.);
     auto s = static_cast<float>(stormo.flock.size());
     for (const auto &b : stormo.flock)
     {
-      com.x += b.getPosition().x / s;
-      com.y += b.getPosition().y / s;
+      com += (b.getPosition() / s);
     }
-    if (stormo.flock.size() > 0)
+    if (s > 0)
     {
-      v_hunt = Coords{par.h * (com.x - hunter.getPosition().x),
-                      par.h * (com.y - hunter.getPosition().y)};
-      assert(par.h >= 0.);
+      v_hunt = (com - hunter.getPosition()) * (par.h);
       assert(std::isfinite(v_hunt.x) && std::isfinite(v_hunt.y));
+      return v_hunt;
     }
     else
     {
-      v_hunt = Coords{0., 0.};
+      return v_hunt;
     }
-    return v_hunt;
   }
 
-  Coords hunt_neighbours(const SingleBoid &hunter, const Flock &stormo,
+  Coords hunt_neighbours(const Boid &hunter, const Flock &stormo,
                          const Parameters &par)
   {
-    Coords v_chase_neighbours{};
+    Coords v_chase_neighbours{0., 0.};
+    Coords sum{0., 0.};
+    auto s = static_cast<float>(stormo.flock.size());
     for (const auto &b : stormo.flock)
     {
-      if (check_neighbours(50., hunter, b))
+      if (check_critical_distance(50., hunter, b))
       {
-        v_chase_neighbours =
-            Coords{par.h * (b.getPosition().x - hunter.getPosition().x),
-                   par.h * (b.getPosition().y - hunter.getPosition().y)};
-        return v_chase_neighbours;
+        sum += (b.getPosition() - hunter.getPosition());
+        v_chase_neighbours = (sum * par.h) / s;
       }
     }
     return v_chase_neighbours;
   }
 
-  Coords hunter_repulsion(const SingleBoid &hunter, const SingleBoid &prey,
+  Coords hunter_repulsion(const Boid &hunter, const Boid &prey,
                           const Parameters &par)
   {
-    Coords v_prey;
+    Coords v_prey{0., 0.};
+    assert(par.p >= 0);
     if (check_critical_distance(par.d, prey, hunter))
     {
-      v_prey = Coords{-(par.p * (hunter.getPosition().x - prey.getPosition().x)),
-                      -(par.p * (hunter.getPosition().y - prey.getPosition().y))};
-      assert(par.p >= 0.);
+      v_prey = (hunter.getPosition() - prey.getPosition()) * (-par.p);
       assert(std::isfinite(v_prey.x) && std::isfinite(v_prey.y));
+      return v_prey;
     }
     else
     {
-      v_prey = Coords{0., 0.};
+      return v_prey;
     }
-    return v_prey;
   }
 
   Coords create_velocity_with_rules(const Parameters &par,
                                     const Flock &stormo,
-                                    const SingleBoid &b,
-                                    const SingleBoid &hunter)
+                                    const Boid &b,
+                                    const Boid &hunter)
   {
     auto neighbours = get_neighbours(par.d, b, stormo);
     return b.getVelocity() + separation(par, neighbours, b) +

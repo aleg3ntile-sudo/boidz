@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <random>
 
 namespace boidz {
 struct Coords {
@@ -17,36 +18,42 @@ struct Coords {
 };
 
 Coords operator+(const Coords &p, const Coords &q);
+Coords operator-(const Coords &p, const Coords &q);
+Coords operator*(const Coords &p, const float &a);
+Coords operator/(const Coords &p, const float &a);
+Coords operator+=(Coords &p, const Coords &q);
 
 sf::ConvexShape createBoidShape(float size);
 
-class SingleBoid {
+class Boid {
   Coords position;
   Coords velocity;
   int cardinality;
   sf::ConvexShape shape;
 
 public:
-  SingleBoid();
-  SingleBoid(Coords p, Coords v, int i);
+  Boid();
+  Boid(Coords p, Coords v, int i);
   int getCardinality() const;
   Coords getPosition() const;
   Coords getVelocity() const;
 
-  void update_Position_in_time(float time);
-  void update_Velocity_with_rules(Coords updated_velocity);
-  void BorderRestriction(float width, float height);
-  void SpeedRestriction(float speed_limit);
-  void update_Shape();
+  void update_position_in_time(float time);
+  void update_velocity_with_rules(Coords updated_velocity);
+  void border_restriction(float width, float height);
+  void speed_restriction(float speed_limit);
+  void update_shape();
   void draw(sf::RenderWindow &window) const;
-  void setColor(const sf::Color &c);
+  void set_color(const sf::Color &c);
 };
 
 class Flock {
 public:
-  std::vector<SingleBoid> flock{};
+  std::vector<Boid> flock{};
   Flock() : flock{} {}
   Flock(long unsigned int N) : flock(N) {}
+
+  void generate_boids(const int &size);
 };
 
 } // namespace boidz
