@@ -5,20 +5,17 @@
 
 namespace boidz
 {
-
-  struct Analytics{
-    float mean;
-    float deviation;
-  };
-
   std::vector<float> get_vector_of_speeds(Flock const &f)
   {
     std::vector<float> vector_of_speeds{};
-    for (const auto &b : f.flock)
+    if (f.flock.size() != 0.f)
     {
-      float speed = std::sqrt(b.getVelocity().x * b.getVelocity().x +
-                              b.getVelocity().y * b.getVelocity().y);
-      vector_of_speeds.push_back(speed);
+      for (const auto &b : f.flock)
+      {
+        float speed = std::sqrt(b.getVelocity().x * b.getVelocity().x +
+                                b.getVelocity().y * b.getVelocity().y);
+        vector_of_speeds.push_back(speed);
+      }
     }
     return vector_of_speeds;
   }
@@ -92,6 +89,42 @@ namespace boidz
     else
     {
       return standard_deviation;
+    }
+  }
+
+  Analytics mean_and_error(const Flock &f, const char &type)
+  {
+    Analytics result{0.f, 0.f};
+    if (type == 'speed')
+    {
+      auto vector_of_speeds = get_vector_of_speeds(f);
+      float mean_speed = std::accumulate(vector_of_speeds.begin(), vector_of_speeds.end(), 0.f) /
+                         static_cast<float>(vector_of_speeds.size());
+      result.mean = mean_speed;
+
+      std::vector<float> v_o_speeds_squared;
+      float s_squared;
+
+      for (auto &s : vector_of_speeds)
+      {
+        s_squared = s * s;
+        v_o_speeds_squared.push_back(s_squared);
+      }
+      float mean_speed_squared = std::accumulate(v_o_speeds_squared.begin(), v_o_speeds_squared.end(), 0.f) /
+                                 static_cast<float>(v_o_speeds_squared.size());
+
+      float stan_dev_sq = mean_speed_squared - mean_speed;
+      float error_of_mean = std::sqrt(stan_dev_sq / static_cast<float>(f.flock.size()));
+      result.error = error_of_mean;
+      return result;
+    }
+    else if (type == 'distance')
+    {
+    }
+    else
+    {
+      std::cout << "Error in function call" << '\n';
+      return result;
     }
   }
 
