@@ -9,8 +9,8 @@ namespace boidz
     {
         std::vector<float> vector_of_mean_speeds{};
         std::vector<float> vector_of_mean_distances{};
-        std::vector<float> vector_of_standard_deviations_speed{};
-        std::vector<float> vector_of_standard_deviations_distance{};
+        std::vector<float> vector_of_errors_speed{};
+        std::vector<float> vector_of_errors_distance{};
     };
 
     struct Analytics
@@ -24,7 +24,8 @@ namespace boidz
     std::vector<float> get_vector_of_distances(Flock const &f);
     float mean_distance(Flock const &f);
     float standard_deviation(std::vector<float> const &v);
-    Analytics mean_and_error(const Flock &f, const char &type);
+    Coords mean_and_error(const Flock &f, const std::string &type);
+    void remove_overflow(std::vector<float> &v, const size_t &max);
 
 } // namespace boidz
 

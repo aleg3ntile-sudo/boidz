@@ -120,53 +120,17 @@ int main()
         hunter.update_shape();
       }
 
-      float mean_speed_for_cycle = mean_speed(stormo);
-      stats.vector_of_mean_speeds.push_back(mean_speed_for_cycle);
-      if (stats.vector_of_mean_speeds.size() > max_points)
-      {
-        stats.vector_of_mean_speeds.erase(
-            stats.vector_of_mean_speeds.begin(),
-            stats.vector_of_mean_speeds.begin() +
-                static_cast<long int>(
-                    (stats.vector_of_mean_speeds.size() - max_points)));
-      }
-      auto speeds = get_vector_of_speeds(stormo);
-      float standard_deviation_speed = standard_deviation(speeds);
-      stats.vector_of_standard_deviations_speed.push_back(standard_deviation_speed);
+      Coords speed_with_error = mean_and_error(stormo, "speed");
+      stats.vector_of_mean_speeds.push_back(speed_with_error.x);
+      remove_overflow(stats.vector_of_mean_speeds, max_points);
+      stats.vector_of_errors_speed.push_back(speed_with_error.y);
+      remove_overflow(stats.vector_of_errors_speed, max_points);
 
-      float mean_distance_boidz = mean_distance(stormo);
-      stats.vector_of_mean_distances.push_back(mean_distance_boidz);
-      auto vector_of_distances = get_vector_of_distances(stormo);
-      float standard_deviation_distance =
-          standard_deviation(vector_of_distances);
-      stats.vector_of_standard_deviations_distance.push_back(standard_deviation_distance);
-      if (stats.vector_of_mean_distances.size() > max_points)
-      {
-        stats.vector_of_mean_distances.erase(
-            stats.vector_of_mean_distances.begin(),
-            stats.vector_of_mean_distances.begin() +
-                static_cast<long int>(
-                    (stats.vector_of_mean_distances.size() -
-                     max_points))); // toglie i punti extra dal grafico
-      }
-      if (stats.vector_of_standard_deviations_speed.size() > max_points)
-      {
-        stats.vector_of_standard_deviations_speed.erase(
-            stats.vector_of_standard_deviations_speed.begin(),
-            stats.vector_of_standard_deviations_speed.begin() +
-                static_cast<long int>(
-                    (stats.vector_of_standard_deviations_speed.size() -
-                     max_points)));
-      }
-      if (stats.vector_of_standard_deviations_distance.size() > max_points)
-      {
-        stats.vector_of_standard_deviations_distance.erase(
-            stats.vector_of_standard_deviations_distance.begin(),
-            stats.vector_of_standard_deviations_distance.begin() +
-                static_cast<long int>(
-                    (stats.vector_of_standard_deviations_distance.size() -
-                     max_points)));
-      }
+      Coords distance_with_error = mean_and_error(stormo, "distance");
+      stats.vector_of_mean_distances.push_back(distance_with_error.x);
+      remove_overflow(stats.vector_of_mean_distances, max_points);
+      stats.vector_of_errors_distance.push_back(distance_with_error.y);
+      remove_overflow(stats.vector_of_errors_distance, max_points);
 
       window.clear(sf::Color(15, 17, 26));
       for (auto &b : stormo.flock)
@@ -211,7 +175,7 @@ int main()
         }
         label.setString(
             "Mean speed = " + std::to_string(output_speed) + '\n' +
-            "Error = " + std::to_string(stats.vector_of_standard_deviations_speed[i]));
+            "Error = " + std::to_string(stats.vector_of_errors_speed[i]));
         point.setPosition(x, y);
         window2.draw(point);
       }
@@ -254,7 +218,7 @@ int main()
         }
         label2.setString(
             "Mean distance =" + std::to_string(*first) + '\n' +
-            "Error = " + std::to_string(stats.vector_of_standard_deviations_distance[i]));
+            "Error = " + std::to_string(stats.vector_of_errors_distance[i]));
         dot.setPosition(x, y);
         window3.draw(dot);
       }

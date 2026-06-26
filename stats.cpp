@@ -8,7 +8,7 @@ namespace boidz
   std::vector<float> get_vector_of_speeds(Flock const &f)
   {
     std::vector<float> vector_of_speeds{};
-    if (f.flock.size() != 0.f)
+    if (f.flock.size() != 0)
     {
       for (const auto &b : f.flock)
       {
@@ -26,7 +26,8 @@ namespace boidz
     if (f.flock.size() != 0)
     {
       auto vector_of_speeds = get_vector_of_speeds(f);
-      mean_speed = std::accumulate(vector_of_speeds.begin(), vector_of_speeds.end(), 0.f) / static_cast<float>(vector_of_speeds.size());
+      mean_speed = std::accumulate(vector_of_speeds.begin(), vector_of_speeds.end(), 0.f) /
+                   static_cast<float>(vector_of_speeds.size());
     }
     return mean_speed;
   }
@@ -92,39 +93,50 @@ namespace boidz
     }
   }
 
-  Analytics mean_and_error(const Flock &f, const char &type)
+  Coords mean_and_error(const Flock &f, const std::string &type)
   {
-    Analytics result{0.f, 0.f};
-    if (type == 'speed')
+    Coords result{0.f, 0.f};
+    std::vector<float> vector_of{};
+    if (type == "speed")
     {
-      auto vector_of_speeds = get_vector_of_speeds(f);
-      float mean_speed = std::accumulate(vector_of_speeds.begin(), vector_of_speeds.end(), 0.f) /
-                         static_cast<float>(vector_of_speeds.size());
-      result.mean = mean_speed;
-
-      std::vector<float> v_o_speeds_squared;
-      float s_squared;
-
-      for (auto &s : vector_of_speeds)
-      {
-        s_squared = s * s;
-        v_o_speeds_squared.push_back(s_squared);
-      }
-      float mean_speed_squared = std::accumulate(v_o_speeds_squared.begin(), v_o_speeds_squared.end(), 0.f) /
-                                 static_cast<float>(v_o_speeds_squared.size());
-
-      float stan_dev_sq = mean_speed_squared - mean_speed;
-      float error_of_mean = std::sqrt(stan_dev_sq / static_cast<float>(f.flock.size()));
-      result.error = error_of_mean;
-      return result;
+      vector_of = get_vector_of_speeds(f);
     }
-    else if (type == 'distance')
+    else if (type == "distance")
     {
+      vector_of = get_vector_of_distances(f);
     }
     else
     {
       std::cout << "Error in function call" << '\n';
       return result;
+    }
+
+    float mean = std::accumulate(vector_of.begin(), vector_of.end(), 0.f) /
+                 static_cast<float>(vector_of.size());
+    result.x = mean;
+
+    std::vector<float> v_of_squares;
+    float square;
+
+    for (auto &s : vector_of)
+    {
+      square = s * s;
+      v_of_squares.push_back(square);
+    }
+    float mean_squared = std::accumulate(v_of_squares.begin(), v_of_squares.end(), 0.f) /
+                         static_cast<float>(v_of_squares.size());
+
+    float stan_dev_sq = mean_squared - mean;
+    float error_of_mean = std::sqrt(stan_dev_sq / static_cast<float>(f.flock.size()));
+    result.y = error_of_mean;
+    return result;
+  }
+
+  void remove_overflow(std::vector<float> &v, const size_t &max)
+  {
+    if (v.size() > max)
+    {
+      v.erase(v.begin(), v.begin() + static_cast<long int>((v.size() - max)));
     }
   }
 
