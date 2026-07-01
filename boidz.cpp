@@ -68,8 +68,7 @@ namespace boidz
 
   void Boid::update_position_in_time(float time)
   {
-    position.x = position.x + time * velocity.x;
-    position.y = position.y + time * velocity.y;
+    position = position + (velocity * time);
   }
 
   void Boid::update_shape()
@@ -113,8 +112,7 @@ namespace boidz
     float speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
     if (speed > speed_limit)
     {
-      velocity.x = velocity.x * speed_limit / speed;
-      velocity.y = velocity.y * speed_limit / speed;
+      velocity = velocity * (speed_limit / speed);
     }
   }
 
@@ -130,8 +128,7 @@ namespace boidz
 
   void Flock::generate_boids(const int &size){
   
-  std::random_device r;
-  std::default_random_engine eng(r());
+  std::default_random_engine eng;
   std::uniform_real_distribution<float> pos{0., 200.};
   std::uniform_real_distribution<float> vel{-50., 50.};
 

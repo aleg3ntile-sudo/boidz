@@ -1,8 +1,6 @@
 #include "rules.hpp"
 #include "stats.hpp"
 #include "graphics.hpp"
-#include <algorithm>
-#include <random>
 
 using namespace boidz;
 int main()
@@ -146,39 +144,9 @@ int main()
       window2.clear();
       window2.draw(axis);
 
-      auto visible_count = stats.vector_of_mean_speeds.size();
-      float graph_left = 50.0;
-      float graph_right = 450.0;
-      float graph_width = graph_right - graph_left;
-      float x_step;
-      if (visible_count > 1)
-      {
-        x_step = graph_width / static_cast<float>((visible_count - 1));
-      }
-      else
-      {
-        x_step = 0.0;
-      }
+      draw_points(stats.vector_of_mean_speeds, stats.vector_of_errors_speed,
+                  label, point, window2);
 
-      for (long unsigned int i{0}; i < visible_count; ++i)
-      {
-        float output_speed = stats.vector_of_mean_speeds[i];
-        float x = graph_left + (x_step * static_cast<float>(i));
-        float y = 550.0f - output_speed;
-        if (y < 50.0f)
-        {
-          y = 50.0f;
-        }
-        if (y > 550.0f)
-        {
-          y = 550.0f;
-        }
-        label.setString(
-            "Mean speed = " + std::to_string(output_speed) + '\n' +
-            "Error = " + std::to_string(stats.vector_of_errors_speed[i]));
-        point.setPosition(x, y);
-        window2.draw(point);
-      }
       window2.draw(label);
       window2.display();
     }
@@ -188,40 +156,8 @@ int main()
       window3.clear();
       window3.draw(axis);
 
-      auto visible_count2 = stats.vector_of_mean_distances.size();
-      long unsigned int i{0};
-      float graph_left = 50.0;
-      float graph_right = 450.0;
-      float graph_width = graph_right - graph_left;
-      float x_step;
-      if (visible_count2 > 1)
-      {
-        x_step = graph_width / static_cast<float>((visible_count2 - 1));
-      }
-      else
-      {
-        x_step = 0.0;
-      }
-      for (auto first = stats.vector_of_mean_distances.begin(),
-                last = stats.vector_of_mean_distances.end();
-           first != last && i < visible_count2; ++first, ++i)
-      {
-        float x = graph_left + (x_step * static_cast<float>(i));
-        float y = 550.0f - *first;
-        if (y < 50.0f)
-        {
-          y = 50.0f;
-        }
-        if (y > 550.0f)
-        {
-          y = 550.0f;
-        }
-        label2.setString(
-            "Mean distance =" + std::to_string(*first) + '\n' +
-            "Error = " + std::to_string(stats.vector_of_errors_distance[i]));
-        dot.setPosition(x, y);
-        window3.draw(dot);
-      }
+      draw_points(stats.vector_of_mean_distances, stats.vector_of_errors_distance,
+                  label2, dot, window3);
       window3.draw(label2);
       window3.display();
     }
