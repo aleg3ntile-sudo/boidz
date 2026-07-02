@@ -158,6 +158,7 @@ int main()
 
       draw_points(stats.vector_of_mean_distances, stats.vector_of_errors_distance,
                   label2, dot, window3);
+                  
       window3.draw(label2);
       window3.display();
     }

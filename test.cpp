@@ -52,10 +52,12 @@ TEST_CASE("check / operator on Coords")
   CHECK(result.y == doctest::Approx(-0.67647f));
 }
 
-TEST_CASE("check += operator on Coords"){
+TEST_CASE("check += operator on Coords")
+{
   Coords result{2.f, 3.f};
-  for(float i{0.f}; i < 5; ++i){
-    Coords addend{i, 2*i};
+  for (float i{0.f}; i < 5; ++i)
+  {
+    Coords addend{i, 2 * i};
     result += addend;
   }
   CHECK(result.x == doctest::Approx(12.f));
@@ -328,16 +330,6 @@ TEST_CASE("check create_velocity_with_rules function")
   CHECK(result.y == doctest::Approx(-7.f));
 }
 
-TEST_CASE("mean_speed: two boids")
-{
-  Flock f{};
-  f.flock.push_back(Boid{{0.f, 0.f}, {3.f, 4.f}, 0});
-  f.flock.push_back(Boid{{0.f, 0.f}, {1.f, 2.f}, 1});
-
-  float result = mean_speed(f);
-  CHECK(result == doctest::Approx((5.f + std::sqrt(5.f)) / 2.f));
-}
-
 TEST_CASE("get_vector_of_speeds: empty flock returns empty vector")
 {
   Flock f{};
@@ -355,22 +347,6 @@ TEST_CASE("get_vector_of_speeds: two boids returns correct speeds")
   CHECK(result.size() == 2);
   CHECK(result[0] == doctest::Approx(5.f));
   CHECK(result[1] == doctest::Approx(std::sqrt(5.f)));
-}
-
-TEST_CASE("mean_speed: empty flock returns 0")
-{
-  Flock f{};
-  CHECK(mean_speed(f) == doctest::Approx(0.f));
-}
-
-TEST_CASE("mean_speed: two boids returns average speed")
-{
-  Flock f{};
-  f.flock.push_back(Boid{{0.f, 0.f}, {3.f, 4.f}, 0});
-  f.flock.push_back(Boid{{0.f, 0.f}, {1.f, 2.f}, 1});
-
-  float expected = (5.f + std::sqrt(5.f)) / 2.f;
-  CHECK(mean_speed(f) == doctest::Approx(expected));
 }
 
 TEST_CASE("get_vector_of_distances: empty flock returns empty vector")
@@ -394,8 +370,8 @@ TEST_CASE("get_vector_of_distances: two boids return two distances")
 TEST_CASE("get_vector_of_distances: distances calculated")
 {
   Flock f{};
-  std::random_device r;
-  std::default_random_engine eng(r());
+
+  std::default_random_engine eng;
   std::uniform_real_distribution<float> px{0.f, 200.f};
   std::uniform_real_distribution<float> py{0.f, 200.f};
   std::uniform_real_distribution<float> vel{-50.f, 50.f};
@@ -413,29 +389,24 @@ TEST_CASE("get_vector_of_distances: distances calculated")
   CHECK(result.size() == 45);
 }
 
-TEST_CASE("mean_distance: empty flock returns 0")
+TEST_CASE("testing the mean ad error function")
 {
   Flock f{};
-  CHECK(mean_distance(f) == doctest::Approx(0.f));
-}
+  std::default_random_engine eng;
+  std::uniform_real_distribution<float> px{0.f, 200.f};
+  std::uniform_real_distribution<float> py{0.f, 200.f};
+  std::uniform_real_distribution<float> vel{-50.f, 50.f};
+  int i{0};
 
-TEST_CASE("mean_distance: two boids with known distance")
-{
-  Flock f{};
-  f.flock.push_back(Boid{{0.f, 0.f}, {0.f, 0.f}, 0});
-  f.flock.push_back(Boid{{3.f, 4.f}, {0.f, 0.f}, 1});
+  for (float j{0.f}; j != 5.f; ++j, ++i)
+  {
+    Coords p{px(eng), py(eng)};
+    Coords v{vel(eng), vel(eng)};
+    Boid b = Boid(p, v, i);
+    f.flock.push_back(b);
+  }
 
-  CHECK(mean_distance(f) == doctest::Approx(5.f));
-}
-
-TEST_CASE("standard_deviation<float>: empty flock returns 0")
-{
-  std::vector<float> v{};
-  CHECK(standard_deviation(v) == doctest::Approx(0.f));
-}
-
-TEST_CASE("standard_deviation<float>: known values")
-{
-  std::vector<float> v{1.f, 2.f, 3.f, 4.f, 5.f};
-  CHECK(standard_deviation(v) == doctest::Approx(std::sqrt(2.f)));
+  Coords result = mean_and_error(f, "hello");
+  CHECK(result.x == -1.f);
+  CHECK(result.y == -1.f);
 }

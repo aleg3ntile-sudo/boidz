@@ -40,7 +40,7 @@ namespace boidz
 
     for (const auto &x : f.flock)
     {
-      if (s.getCardinality() != x.getCardinality() &&
+      if (s.getCardinality() != x.getCardinality() && 
           check_critical_distance(distance, s, x))
       {
         neighbours.push_back(x);
