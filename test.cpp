@@ -356,7 +356,7 @@ TEST_CASE("get_vector_of_distances: empty flock returns empty vector")
   CHECK(result.empty());
 }
 
-TEST_CASE("get_vector_of_distances: two boids return two distances")
+TEST_CASE("get_vector_of_distances: two boids return one distance")
 {
   Flock f{};
   f.flock.push_back(Boid{{0.f, 0.f}, {0.f, 0.f}, 0});
