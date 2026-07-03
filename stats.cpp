@@ -63,25 +63,32 @@ namespace boidz
       return result = {-1.f, -1.f};
     }
 
-    float mean = std::accumulate(vector_of.begin(), vector_of.end(), 0.f) /
-                 static_cast<float>(vector_of.size());
-    result.x = mean;
-
-    std::vector<float> v_of_squares;
-    float square;
-
-    for (auto &s : vector_of)
+    if (vector_of.size() != 0)
     {
-      square = s * s;
-      v_of_squares.push_back(square);
-    }
-    float mean_squared = std::accumulate(v_of_squares.begin(), v_of_squares.end(), 0.f) /
-                         static_cast<float>(v_of_squares.size());
+      float mean = std::accumulate(vector_of.begin(), vector_of.end(), 0.f) /
+                   static_cast<float>(vector_of.size());
+      result.x = mean;
 
-    float stan_dev_sq = mean_squared - mean;
-    float error_of_mean = std::sqrt(stan_dev_sq / static_cast<float>(f.flock.size()));
-    result.y = error_of_mean;
-    return result;
+      std::vector<float> v_of_squares;
+      float square;
+
+      for (auto &s : vector_of)
+      {
+        square = s * s;
+        v_of_squares.push_back(square);
+      }
+      float mean_squared = std::accumulate(v_of_squares.begin(), v_of_squares.end(), 0.f) /
+                           static_cast<float>(v_of_squares.size());
+
+      float stan_dev_sq = mean_squared - mean;
+      float error_of_mean = std::sqrt(stan_dev_sq / static_cast<float>(f.flock.size()));
+      result.y = error_of_mean;
+      return result;
+    }
+    else
+    {
+      return result;
+    }
   }
 
   void remove_overflow(std::vector<float> &v, const size_t &max)

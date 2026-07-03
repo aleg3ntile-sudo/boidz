@@ -30,7 +30,7 @@ namespace boidz
     return p = p + q;
   }
 
-  sf::ConvexShape createBoidShape(float size)
+  sf::ConvexShape create_boid_shape(float size)
   {
     sf::ConvexShape shape;
     shape.setPointCount(3);
@@ -46,10 +46,10 @@ namespace boidz
   }
 
   Boid::Boid()
-      : position{}, velocity{}, cardinality(0), shape{createBoidShape(5.)} {}
+      : position{}, velocity{}, cardinality(0), shape{create_boid_shape(5.)} {}
 
   Boid::Boid(Coords p, Coords v, int i)
-      : position(p), velocity(v), cardinality(i), shape{createBoidShape(5.)} {}
+      : position(p), velocity(v), cardinality(i), shape{create_boid_shape(5.)} {}
 
   int Boid::getCardinality() const
   {

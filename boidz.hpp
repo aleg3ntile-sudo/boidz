@@ -23,7 +23,7 @@ Coords operator*(const Coords &p, const float &a);
 Coords operator/(const Coords &p, const float &a);
 Coords operator+=(Coords &p, const Coords &q);
 
-sf::ConvexShape createBoidShape(float size);
+sf::ConvexShape create_boid_shape(float size);
 
 class Boid {
   Coords position;

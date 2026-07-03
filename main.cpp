@@ -91,31 +91,11 @@ int main()
     {
       float dt = clock.restart().asSeconds();
       timer += dt;
-      std::vector<Coords> updated_velocities(stormo.flock.size());
-      for (size_t i = 0; i < stormo.flock.size(); ++i)
-      {
-        updated_velocities[i] = create_velocity_with_rules(params, stormo,
-                                                           stormo.flock[i], hunter);
-      }
-
-      for (size_t i = 0; i < stormo.flock.size(); ++i)
-      {
-        stormo.flock[i].update_velocity_with_rules(updated_velocities[i]);
-        stormo.flock[i].update_position_in_time(dt);
-        stormo.flock[i].border_restriction(800., 600.);
-        stormo.flock[i].speed_restriction(130);
-        stormo.flock[i].update_shape();
-      }
+      update_flock(stormo, params, hunter, dt);
 
       if (timer >= delay)
       {
-        Coords new_hunt_velocity = hunt_the_flock(hunter, stormo, params) +
-                                   hunt_neighbours(hunter, stormo, params);
-        hunter.update_velocity_with_rules(new_hunt_velocity);
-        hunter.update_position_in_time(dt);
-        hunter.border_restriction(800., 600.);
-        hunter.speed_restriction(100);
-        hunter.update_shape();
+        update_hunter(hunter, stormo, params, dt);
       }
 
       Coords speed_with_error = mean_and_error(stormo, "speed");
@@ -158,7 +138,7 @@ int main()
 
       draw_points(stats.vector_of_mean_distances, stats.vector_of_errors_distance,
                   label2, dot, window3);
-                  
+
       window3.draw(label2);
       window3.display();
     }

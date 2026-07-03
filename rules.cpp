@@ -33,14 +33,14 @@ namespace boidz
   }
 
   std::vector<Boid> get_neighbours(const float &distance,
-                                         const Boid &s, const Flock &f)
+                                   const Boid &s, const Flock &f)
   {
     assert(distance >= 0.);
     std::vector<Boid> neighbours{};
 
     for (const auto &x : f.flock)
     {
-      if (s.getCardinality() != x.getCardinality() && 
+      if (s.getCardinality() != x.getCardinality() &&
           check_critical_distance(distance, s, x))
       {
         neighbours.push_back(x);
@@ -185,6 +185,38 @@ namespace boidz
            alignment(par, neighbours, b) +
            cohesion(par, neighbours, b) +
            hunter_repulsion(hunter, b, par);
+  }
+
+  void update_flock(Flock &stormo, const Parameters &params, const Boid &hunter, float time)
+  {
+    std::vector<Coords> updated_velocities(stormo.flock.size());
+    for (size_t i = 0; i < stormo.flock.size(); ++i)
+    {
+      updated_velocities[i] = create_velocity_with_rules(params, stormo,
+                                                         stormo.flock[i], hunter);
+    }
+
+    for (size_t i = 0; i < stormo.flock.size(); ++i)
+    {
+      stormo.flock[i].update_velocity_with_rules(updated_velocities[i]);
+      stormo.flock[i].update_position_in_time(time);
+      stormo.flock[i].border_restriction(800., 600.);
+      stormo.flock[i].speed_restriction(130);
+      stormo.flock[i].update_shape();
+    }
+  }
+
+  void update_hunter(Boid &hunter, const Flock &flock, const Parameters &params, float time)
+  {
+    {
+      Coords new_hunt_velocity = hunt_the_flock(hunter, flock, params) +
+                                 hunt_neighbours(hunter, flock, params);
+      hunter.update_velocity_with_rules(new_hunt_velocity);
+      hunter.update_position_in_time(time);
+      hunter.border_restriction(800.f, 600.f);
+      hunter.speed_restriction(100.f);
+      hunter.update_shape();
+    }
   }
 
 } // namespace boidz
