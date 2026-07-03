@@ -1,14 +1,14 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <random>
+
 #include "doctest.h"
 #include "rules.hpp"
 #include "stats.hpp"
-#include <random>
 
 using namespace boidz;
 
-// operator +
-TEST_CASE("check + operator on Coords")
-{
+// operator
+TEST_CASE("check + operator on Coords") {
   Coords a{1.f, -9.f};
   Coords b{8.f, 2.3f};
   Coords result = a + b;
@@ -16,8 +16,7 @@ TEST_CASE("check + operator on Coords")
   CHECK(result.y == doctest::Approx(-6.7f));
 }
 
-TEST_CASE("check - operator on Coords")
-{
+TEST_CASE("check - operator on Coords") {
   Coords a{2.f, 3.f};
   Coords b{-3.f, 2.f};
   Coords result = a - b;
@@ -25,8 +24,7 @@ TEST_CASE("check - operator on Coords")
   CHECK(result.y == doctest::Approx(1.f));
 }
 
-TEST_CASE("check * operator on Coords")
-{
+TEST_CASE("check * operator on Coords") {
   float a{3.4f};
   Coords b{8.f, -2.3f};
   Coords result = b * a;
@@ -34,8 +32,7 @@ TEST_CASE("check * operator on Coords")
   CHECK(result.y == doctest::Approx(-7.82f));
 }
 
-TEST_CASE("check * operator on Coords")
-{
+TEST_CASE("check * operator on Coords") {
   float a{0.f};
   Coords b{8.f, 2.3f};
   Coords result = b * a;
@@ -43,8 +40,7 @@ TEST_CASE("check * operator on Coords")
   CHECK(result.y == doctest::Approx(0.f));
 }
 
-TEST_CASE("check / operator on Coords")
-{
+TEST_CASE("check / operator on Coords") {
   float a{3.4f};
   Coords b{10.f, -2.3f};
   Coords result = b / a;
@@ -52,11 +48,9 @@ TEST_CASE("check / operator on Coords")
   CHECK(result.y == doctest::Approx(-0.67647f));
 }
 
-TEST_CASE("check += operator on Coords")
-{
+TEST_CASE("check += operator on Coords") {
   Coords result{2.f, 3.f};
-  for (float i{0.f}; i < 5; ++i)
-  {
+  for (float i{0.f}; i < 5; ++i) {
     Coords addend{i, 2 * i};
     result += addend;
   }
@@ -64,29 +58,26 @@ TEST_CASE("check += operator on Coords")
   CHECK(result.y == doctest::Approx(23.f));
 }
 
-TEST_CASE("check get_distance function")
-{
+// get_distance
+TEST_CASE("check get_distance function") {
   Boid b1{{1.0f, 2.0f}, {0.5f, 0.5f}, 3};
   Boid b2{{3.0f, 1.5f}, {1.0f, 0.2f}, 12};
   CHECK(get_distance(b1, b2) == doctest::Approx(2.06f).epsilon(0.01f));
 }
 
-TEST_CASE("check get_distance function")
-{
+TEST_CASE("check get_distance function") {
   Boid b1{{1.0f, 2.3f}, {3.1f, 2.0f}, 1};
   Boid b2;
   CHECK(get_distance(b1, b2) == doctest::Approx(2.51f).epsilon(0.01f));
 }
 
-TEST_CASE("check get_distance function - one boid")
-{
+TEST_CASE("check get_distance function - one boid") {
   Boid b1{{0.0f, 1.0f}, {4.3f, 2.0f}, 1};
   CHECK(get_distance(b1, b1) == 0.f);
 }
 
 // check_critical_distance
-TEST_CASE("check check_critical_distance function")
-{
+TEST_CASE("check check_critical_distance function") {
   Boid b1{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
   Boid b2{{2.0f, 0.0f}, {0.0f, 0.0f}, 1};
   CHECK(check_critical_distance(2.0f, b1, b2) == true);
@@ -94,8 +85,7 @@ TEST_CASE("check check_critical_distance function")
 }
 
 // get_neighbours
-TEST_CASE("check get_neighbours function - no neighbours")
-{
+TEST_CASE("check get_neighbours function - no neighbours") {
   Flock f;
   Boid b1{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
   Boid b2{{10.0f, 0.0f}, {0.0f, 0.0f}, 2};
@@ -108,8 +98,7 @@ TEST_CASE("check get_neighbours function - no neighbours")
   CHECK(result.size() == 0);
 }
 
-TEST_CASE("check get_neighbours function - some neighbours")
-{
+TEST_CASE("check get_neighbours function - some neighbours") {
   Flock f;
   Boid b1{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
   Boid b2{{1.0f, 0.0f}, {0.0f, 0.0f}, 2};
@@ -122,8 +111,7 @@ TEST_CASE("check get_neighbours function - some neighbours")
   CHECK(result.size() == 1);
 }
 
-TEST_CASE("check get_neighbours function - all are neighbours")
-{
+TEST_CASE("check get_neighbours function - all are neighbours") {
   Flock f;
   Boid b1{{0.0f, 0.0f}, {0.5f, 0.0f}, 1};
   Boid b2{{0.0f, 1.0f}, {0.0f, 0.5f}, 2};
@@ -138,8 +126,7 @@ TEST_CASE("check get_neighbours function - all are neighbours")
 }
 
 // separation
-TEST_CASE("check separation_for_Boid function")
-{
+TEST_CASE("check separation_for_Boid function") {
   Parameters par{5.0f, 5.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
@@ -152,9 +139,7 @@ TEST_CASE("check separation_for_Boid function")
   CHECK(result.y == doctest::Approx(0.0f));
 }
 
-TEST_CASE(
-    "check separation_for_Boid function - one boid is too distant")
-{
+TEST_CASE("check separation_for_Boid function - one boid is too distant") {
   Parameters par{5.0f, 5.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{0.0f, 0.0f}, {0.0f, 0.0f}, 1};
@@ -170,8 +155,7 @@ TEST_CASE(
 }
 
 // alignment
-TEST_CASE("check alignment function")
-{
+TEST_CASE("check alignment function") {
   Parameters par{5.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{1.0f, 0.0f}, {1.0f, 0.0f}, 1};
@@ -183,8 +167,7 @@ TEST_CASE("check alignment function")
   CHECK(result.y == doctest::Approx(1.0f));
 }
 
-TEST_CASE("check alignment function - empty neighbours")
-{
+TEST_CASE("check alignment function - empty neighbours") {
   Parameters par{0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{1.5f, 0.5f}, {1.0f, -1.0f}, 1};
@@ -194,8 +177,7 @@ TEST_CASE("check alignment function - empty neighbours")
   CHECK(result.y == doctest::Approx(0.0f));
 }
 
-TEST_CASE("check alignment function - single neighbour")
-{
+TEST_CASE("check alignment function - single neighbour") {
   Parameters par{0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{1.5f, 0.5f}, {1.0f, -1.0f}, 1};
@@ -208,8 +190,7 @@ TEST_CASE("check alignment function - single neighbour")
 }
 
 // cohesion
-TEST_CASE("check cohesion function")
-{
+TEST_CASE("check cohesion function") {
   Parameters par{5.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{1.0f, -2.0f}, {0.0f, 1.0f}, 1};
@@ -221,8 +202,7 @@ TEST_CASE("check cohesion function")
   CHECK(result.y == doctest::Approx(4.5f));
 }
 
-TEST_CASE("check cohesion function - empty neighbours")
-{
+TEST_CASE("check cohesion function - empty neighbours") {
   Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{1.0f, -2.0f}, {0.0f, 1.0f}, 1};
@@ -232,8 +212,7 @@ TEST_CASE("check cohesion function - empty neighbours")
   CHECK(result.y == doctest::Approx(0.0f));
 }
 
-TEST_CASE("check cohesion function - multiple neighbours")
-{
+TEST_CASE("check cohesion function - multiple neighbours") {
   Parameters par{5.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
   std::vector<Boid> neighbours;
   Boid a{{1.0f, -2.0f}, {0.0f, 1.0f}, 1};
@@ -248,8 +227,7 @@ TEST_CASE("check cohesion function - multiple neighbours")
 }
 
 // hunt
-TEST_CASE("check hunt function - no boids")
-{
+TEST_CASE("check hunt function - no boids") {
   Boid h{{0.f, 0.f}, {0.f, 0.f}, 1};
   Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f};
   Flock f;
@@ -258,8 +236,7 @@ TEST_CASE("check hunt function - no boids")
   CHECK(result.y == (0.f));
 }
 
-TEST_CASE("check hunt function - three boids")
-{
+TEST_CASE("check hunt function - three boids") {
   Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f};
   Boid h{{7.0f, 1.0f}, {8.0f, 5.0f}, 11};
   Flock f;
@@ -274,8 +251,7 @@ TEST_CASE("check hunt function - three boids")
   CHECK(result.y == doctest::Approx(2.0f));
 }
 
-TEST_CASE("check hunt function - simmetrical configuration")
-{
+TEST_CASE("check hunt function - simmetrical configuration") {
   Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 13.0f, 1.0f};
   Boid h{{0.0f, 0.0f}, {8.0f, 5.0f}, 11};
   Flock f;
@@ -293,8 +269,7 @@ TEST_CASE("check hunt function - simmetrical configuration")
 }
 
 // hunter_repulsion
-TEST_CASE("check hunter_repulsion function - no hunter in sight")
-{
+TEST_CASE("check hunter_repulsion function - no hunter in sight") {
   Parameters par{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 13.0f, 3.0f};
   Boid h{{30.f, 40.f}, {0.0f, 5.0f}, 11};
   Flock f;
@@ -305,8 +280,7 @@ TEST_CASE("check hunter_repulsion function - no hunter in sight")
   CHECK(result.y == 0.f);
 }
 
-TEST_CASE("check hunter_repulsion function - hunter in sight")
-{
+TEST_CASE("check hunter_repulsion function - hunter in sight") {
   Parameters par{15.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
   Boid h{{10.0f, 10.0f}, {0.5f, 1.0f}, 1};
   Boid prey{{5.5f, 1.0f}, {-4.0f, 2.0f}, 11};
@@ -316,8 +290,7 @@ TEST_CASE("check hunter_repulsion function - hunter in sight")
 }
 
 // create_velocity_with_rules
-TEST_CASE("check create_velocity_with_rules function")
-{
+TEST_CASE("check create_velocity_with_rules function") {
   Parameters par{5.0f, 1.0f, 10.0f, 1.0f, 3.0f, 0.0f, 0.0f};
   Boid a{{-3.0f, -2.0f}, {5.0f, 2.0f}, 1};
   Boid b{{1.0f, 1.0f}, {10.0f, 1.0f}, 2};
@@ -330,15 +303,14 @@ TEST_CASE("check create_velocity_with_rules function")
   CHECK(result.y == doctest::Approx(-7.f));
 }
 
-TEST_CASE("get_vector_of_speeds: empty flock returns empty vector")
-{
+// vector_of_speeds
+TEST_CASE("get_vector_of_speeds: empty flock returns empty vector") {
   Flock f{};
   auto result = get_vector_of_speeds(f);
   CHECK(result.empty());
 }
 
-TEST_CASE("get_vector_of_speeds: two boids returns correct speeds")
-{
+TEST_CASE("get_vector_of_speeds: two boids returns correct speeds") {
   Flock f{};
   f.flock.push_back(Boid{{0.f, 0.f}, {3.f, 4.f}, 0});
   f.flock.push_back(Boid{{0.f, 0.f}, {1.f, 2.f}, 1});
@@ -349,15 +321,14 @@ TEST_CASE("get_vector_of_speeds: two boids returns correct speeds")
   CHECK(result[1] == doctest::Approx(std::sqrt(5.f)));
 }
 
-TEST_CASE("get_vector_of_distances: empty flock returns empty vector")
-{
+// vector_of_distances
+TEST_CASE("get_vector_of_distances: empty flock returns empty vector") {
   Flock f{};
   auto result = get_vector_of_distances(f);
   CHECK(result.empty());
 }
 
-TEST_CASE("get_vector_of_distances: two boids return one distance")
-{
+TEST_CASE("get_vector_of_distances: two boids return one distance") {
   Flock f{};
   f.flock.push_back(Boid{{0.f, 0.f}, {0.f, 0.f}, 0});
   f.flock.push_back(Boid{{3.f, 4.f}, {0.f, 0.f}, 1});
@@ -367,8 +338,7 @@ TEST_CASE("get_vector_of_distances: two boids return one distance")
   CHECK(result[0] == doctest::Approx(5.f));
 }
 
-TEST_CASE("get_vector_of_distances: distances calculated")
-{
+TEST_CASE("get_vector_of_distances: distances calculated") {
   Flock f{};
 
   std::default_random_engine eng;
@@ -377,8 +347,7 @@ TEST_CASE("get_vector_of_distances: distances calculated")
   std::uniform_real_distribution<float> vel{-50.f, 50.f};
   int i{0};
 
-  for (float j{0.f}; j != 10.f; ++j, ++i)
-  {
+  for (float j{0.f}; j != 10.f; ++j, ++i) {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
     Boid b = Boid(p, v, i);
@@ -389,8 +358,8 @@ TEST_CASE("get_vector_of_distances: distances calculated")
   CHECK(result.size() == 45);
 }
 
-TEST_CASE("testing the mean ad error function")
-{
+// mean and error
+TEST_CASE("testing the mean ad error function") {
   Flock f{};
   std::default_random_engine eng;
   std::uniform_real_distribution<float> px{0.f, 200.f};
@@ -398,8 +367,7 @@ TEST_CASE("testing the mean ad error function")
   std::uniform_real_distribution<float> vel{-50.f, 50.f};
   int i{0};
 
-  for (float j{0.f}; j != 5.f; ++j, ++i)
-  {
+  for (float j{0.f}; j != 5.f; ++j, ++i) {
     Coords p{px(eng), py(eng)};
     Coords v{vel(eng), vel(eng)};
     Boid b = Boid(p, v, i);
