@@ -385,7 +385,7 @@ TEST_CASE("testing the mean ad error function: wrong word in function call")
   Flock f{};
   f.generate_boids(5);
 
-  Coords result = mean_and_error(f, "giacominchia diotapiedi battinstrada");
+  Coords result = mean_and_error(f, "hello");
   CHECK(result.x == -1.f);
   CHECK(result.y == -1.f);
 }
